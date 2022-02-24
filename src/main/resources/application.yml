@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    ROOT: info
+    org:
+      hibernate:
+        SQL: DEBUG
+        type: trace
+spring:
+  profiles:
+    active: local
+    devtools:
+      livereload:
+        enabled: true
+
+  datasource:
+    # 로컬
+    url: jdbc:mysql://localhost:3306/templet
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: chlznsl009!
+    initialization-mode: always
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 100
+      idle-timeout: 10000
+  jpa:
+    hibernate:
+      ddl-auto: create
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    # 개발
+    properties:
+      hibernate:
+      format_sql: true
+      hbm2ddl.auto: update
+      show_sql: true
+      generate-ddl: true
+      database: mysql
+      repositories.enabled: true
