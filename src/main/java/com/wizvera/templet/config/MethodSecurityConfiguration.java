@@ -39,7 +39,7 @@ public class MethodSecurityConfiguration extends GlobalMethodSecurityConfigurati
         decisionVoters.add(new PreInvocationAuthorizationAdviceVoter(expressionAdvice));
         decisionVoters.add(new RoleVoter());
         decisionVoters.add(new AuthenticatedVoter());
-        decisionVoters.add(new CustomVoter());      // 임의의 Voter 를 생성해서 한표의 찬성 표를 날리게 설정
+//        decisionVoters.add(new CustomVoter());      // 임의의 Voter 를 생성해서 한표의 찬성 표를 날리게 설정
 
         return new AffirmativeBased(decisionVoters);    // AffirmativeBased : 긍정위원회 (한표라도 찬성 표가 있으면 통과)
     }

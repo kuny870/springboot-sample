@@ -11,6 +11,7 @@ logging:
       hibernate:
         SQL: DEBUG
         type: trace
+      springframework.web: trace
 spring:
   profiles:
     active: local
@@ -21,6 +22,7 @@ spring:
     prefix: classpath:templates/
     suffix: .html
     cache: false
+    check-template-location: true
 
   datasource:
     # 로컬

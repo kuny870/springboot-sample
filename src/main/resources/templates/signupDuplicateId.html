@@ -10,31 +10,26 @@
 
 
 <div class="container center-contents">
-    <button class="btn btn-info" onclick="location.href='/'" style="margin-left:400px;">  메인 페이지 </button>
     <div class="row">
         <form class="form-signin" method="post" th:action="@{/user/save}">
-            <h1 class="h3 mb-3 font-weight-normal"> 회원가입 </h1>
-            <label for="username" class="sr-only">아이디</label>
-            <input id="username"
-                   name="username"
-                   class="form-control"
-                   placeholder="아이디를 입력해 주세요."
-                   required autofocus>
-            <label for="password" class="sr-only">비밀번호</label>
-            <input type="password"
-                   id="password"
-                   name="password"
-                   class="form-control"
-                   placeholder="비밀번호를 입력해 주세요"
-                   required>
-            <input type="radio" name="auth" value="ROLE_ADMIN,ROLE_USER"> admin
-            <input type="radio" name="auth" value="ROLE_USER" checked="checked"> user <br>
+            <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> 회원가입 </h1>
+            <label for="username" class="sr-only">Email address</label>
+            <input type="email"
+                   id="username" name="username" class="form-control" placeholder="Email address" required autofocus><label for="password" class="sr-only">Password</label>
+            <input type="password" id="password" name="password"  class="form-control" placeholder="Password" required>
+            <div class="checkbox mb-3" style="text-align: center">
+                <label>
+                    <input type="radio" name="auth" value="ROLE_ADMIN,ROLE_USER"> admin
+                    <input type="radio" name="auth" value="ROLE_USER" checked="checked"> user <br>
+                </label>
+            </div>
             <button class="btn btn-lg btn-primary btn-block"  type="submit"> 가입하기 </button>
+            <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/login'}"> 로그인 페이지 </a>
+            <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/'}"> 메인 페이지 </a>
             <div class="error-message" th:if="${signupError}">
-                <span> 동일한 아이디가 존재합니다. </span>
+                <span style="color: red"> 동일한 아이디가 존재합니다. </span>
             </div>
         </form>
-
     </div>
 </div>
 
