@@ -1,4 +1,4 @@
-package com.sp.fc.web.controller;
+package com.wizvera.templet.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

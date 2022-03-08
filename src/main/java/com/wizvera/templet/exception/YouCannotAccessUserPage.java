@@ -1,4 +1,4 @@
-package com.sp.fc.web.controller;
+package com.wizvera.templet.exception;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

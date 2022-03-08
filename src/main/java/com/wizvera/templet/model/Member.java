@@ -25,7 +25,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
 
-    @Column(name = "del_yn")
+    @Column(name = "del_yn", columnDefinition = "CHAR(1) DEFAULT 'N'")
     private String delYn;
 
 }

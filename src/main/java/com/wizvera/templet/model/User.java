@@ -16,15 +16,15 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 @Entity
-public class UserInfo implements UserDetails {
+public class User implements UserDetails {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "email", unique = true)
-    private String email;
+    @Column(name = "username", unique = true)
+    private String username;
 
     @Column(name = "password")
     private String password;
@@ -32,16 +32,27 @@ public class UserInfo implements UserDetails {
     @Column(name = "auth")
     private String auth;
 
+    @Column(name = "state")
+    private State state;
+
+    public static enum State {
+        NORMAL, // 일반 사용자
+        EXPIRATION // 계정 만료 사용자
+    }
+
+
+
     @Column(name = "del_yn", columnDefinition = "CHAR(1) DEFAULT 'N'")
     private String delYn;
 
 
     @Builder
-    public UserInfo(String email, String password, String auth, String delYn) {
-        this.email = email;
+    public User(String username, String password, String auth, String delYn, State state) {
+        this.username = username;
         this.password = password;
         this.auth = auth;
-        this.delYn = delYn;
+        this.delYn = "N";
+        this.state = State.NORMAL;
     }
 
     // 사용자의 권한을 콜렉션 형태로 반환
@@ -58,7 +69,7 @@ public class UserInfo implements UserDetails {
     // 사용자의 id를 반환 (unique한 값)
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     // 사용자의 password를 반환

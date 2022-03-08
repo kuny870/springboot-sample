@@ -1,6 +1,6 @@
-package com.sp.fc.web.config;
+package com.wizvera.templet.config;
 
-import com.sp.fc.web.controller.YouCannotAccessUserPage;
+import com.wizvera.templet.exception.YouCannotAccessUserPage;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 

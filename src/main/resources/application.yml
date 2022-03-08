@@ -1,5 +1,8 @@
 server:
   port: 8080
+  servlet:
+    session:
+      timeout: 60s
 
 logging:
   level:
@@ -14,6 +17,10 @@ spring:
     devtools:
       livereload:
         enabled: true
+  thymeleaf:
+    prefix: classpath:templates/
+    suffix: .html
+    cache: false
 
   datasource:
     # 로컬
@@ -29,12 +36,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-    database-platform: org.hibernate.dialect.MySQL5Dialect
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     # 개발
     properties:
       hibernate:
       format_sql: true
-      hbm2ddl.auto: update
+      hbm2ddl.auto: none
       show_sql: true
       generate-ddl: true
       database: mysql
