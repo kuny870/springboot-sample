@@ -5,9 +5,11 @@ import com.wizvera.templet.repository.UserRepository;
 import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -81,6 +83,7 @@ public class UserService implements UserDetailsService {
      */
     public User updateUser(User user) {
         Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
+
         if(!optionalUser.isPresent()) {
             throw new EntityNotFoundException(
                     "User not present in the database"
@@ -88,6 +91,14 @@ public class UserService implements UserDetailsService {
         }
 
         User getUser = optionalUser.get();
+
+        // 회원 본인이 아니면 exception 발생
+        if(getUser.getId() != ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId()) {
+            // 본인이 아니여도 관리자는 수정 가능
+            if(!((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAuthorities().contains("ROLE_ADMIN")){
+                throw new AccessDeniedException("access denied");
+            }
+        }
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         getUser.setPassword(encoder.encode(user.getPassword()));

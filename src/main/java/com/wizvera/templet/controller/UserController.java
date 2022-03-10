@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,10 +24,17 @@ public class UserController {
     @Lazy
     private final UserService userService;
 
+    // JWT 테스트
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/greeting")
+    public String greeting1() {
+        return "hello";
+    }
+
     // 테스트
     @PreAuthorize("@nameCheck.check(#name)")
     @GetMapping("/greeting/{name}")
-    public String greeting(@PathVariable String name) {
+    public String greeting2(@PathVariable String name) {
         return "hello";
     }
 

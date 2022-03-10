@@ -11,7 +11,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -139,6 +138,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     request
                             .antMatchers("/", "/signup", "/user/save", "/auth", "/greeting/**").permitAll() // 모든 허용 url
                             .antMatchers("/admin/**").hasRole("ADMIN")
+                            .antMatchers("/user/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
                             .mvcMatchers("/greeting/{name}").access("@nameCheck.check(#name)")
 //                            .mvcMatchers("/user-page").hasRole("ADMIN")
                             .anyRequest().authenticated()       // 권한이 있어야 허용

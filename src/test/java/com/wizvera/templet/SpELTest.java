@@ -1,7 +1,9 @@
 package com.wizvera.templet;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.expression.AccessException;

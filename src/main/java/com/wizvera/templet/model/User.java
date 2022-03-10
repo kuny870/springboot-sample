@@ -50,7 +50,7 @@ public class User implements UserDetails {
     public User(String username, String password, String auth, String delYn, State state) {
         this.username = username;
         this.password = password;
-        this.auth = auth;
+        this.auth = "ROLE_USER";
         this.delYn = "N";
         this.state = State.NORMAL;
     }
