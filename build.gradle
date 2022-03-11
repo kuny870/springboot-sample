@@ -33,6 +33,7 @@ dependencies {
 	implementation 'org.springframework.security:spring-security-acl'
 	implementation 'net.sf.ehcache:ehcache'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
 	implementation('com.auth0:java-jwt:3.16.0')		// oauth0
 	implementation('io.jsonwebtoken:jjwt:0.9.1')	// okta

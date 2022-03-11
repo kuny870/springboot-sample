@@ -12,16 +12,21 @@
 <div class="container center-contents">
     <div class="row">
         <form class="form-signin" method="post" th:action="@{/login}">
+
             <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> 로그인 </h1>
+
             <label for="username" class="sr-only">Email address</label>
-            <input type="email"
-                   id="username" name="username" class="form-control" placeholder="Email address" required autofocus><label for="password" class="sr-only">Password</label>
+            <input type="email" id="username" name="username" class="form-control" placeholder="Email address" required autofocus>
+
+            <label for="password" class="sr-only">Password</label>
             <input type="password" id="password" name="password"  class="form-control" placeholder="Password" required>
+
             <div class="checkbox mb-3" style="text-align: center">
                 <label>
                     <input type="checkbox" name="remember-me"> Remember me
                 </label>
             </div>
+
             <button class="btn btn-lg btn-primary btn-block" type="submit"> 로그인 </button>
             <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/signup'}"> 회원 가입 </a>
             <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/'}"> 메인 페이지 </a>

@@ -1,6 +1,6 @@
 html,
 body {
-  height: 100%;
+  height: 87%;
 }
 
 body {
@@ -24,6 +24,10 @@ body {
   padding: 15px;
   margin: auto;
   margin-top: 3em;
+
+  background-color: #fff;
+  border-radius: 1em;
+  box-shadow: 10px 10px 5px #777779;
 }
 .form-signin .checkbox {
   font-weight: 400;

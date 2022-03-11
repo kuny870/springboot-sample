@@ -3,7 +3,6 @@ package com.wizvera.templet.controller;
 import com.wizvera.templet.model.SessionInfo;
 import com.wizvera.templet.model.User;
 import com.wizvera.templet.model.UserSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Controller;
@@ -17,14 +16,13 @@ import java.util.stream.Collectors;
 @Controller
 public class SessionController {
 
-    @Autowired
     private SessionRegistry sessionRegistry;
 
     @GetMapping("/sessions")
     public ModelAndView sessions(ModelAndView mav){
         mav.addObject("sessionList",
                 sessionRegistry.getAllPrincipals().stream().map(p->UserSession.builder()
-                        .username(((User)p).getUsername())
+                        .username(((User)p).getEmail())
                         .sessions(sessionRegistry.getAllSessions(p, false).stream().map(s->
                                 SessionInfo.builder()
                                         .sessionId(s.getSessionId())

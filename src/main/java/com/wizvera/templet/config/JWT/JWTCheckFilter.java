@@ -36,7 +36,7 @@ public class JWTCheckFilter extends BasicAuthenticationFilter {
         if(result.isSuccess()){
             User user = (User) userService.loadUserByUsername(result.getUsername());
             UsernamePasswordAuthenticationToken userToken = new UsernamePasswordAuthenticationToken(
-                    user.getUsername(), null, user.getAuthorities()
+                    user.getEmail(), null, user.getAuthorities()
             );
             SecurityContextHolder.getContext().setAuthentication(userToken);
             chain.doFilter(request, response);

@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Data
 @Entity
 public class User implements UserDetails {
@@ -23,8 +23,11 @@ public class User implements UserDetails {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", unique = true)
-    private String username;
+    @Column(name = "email", unique = true)
+    private String email;
+
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "password")
     private String password;
@@ -34,6 +37,9 @@ public class User implements UserDetails {
 
     @Column(name = "state")
     private State state;
+
+    @Column(name = "enabled")
+    private boolean enabled;
 
     public static enum State {
         NORMAL, // 일반 사용자
@@ -47,10 +53,15 @@ public class User implements UserDetails {
 
 
     @Builder
-    public User(String username, String password, String auth, String delYn, State state) {
-        this.username = username;
+    public User(String email, String password, String name, String auth, String delYn, State state) {
+        this.email = email;
         this.password = password;
-        this.auth = "ROLE_USER";
+        this.name = name;
+        if(auth == null) {
+            this.auth = "ROLE_USER";
+        }else {
+            this.auth = auth;
+        }
         this.delYn = "N";
         this.state = State.NORMAL;
     }
@@ -69,7 +80,7 @@ public class User implements UserDetails {
     // 사용자의 id를 반환 (unique한 값)
     @Override
     public String getUsername() {
-        return username;
+        return name;
     }
 
     // 사용자의 password를 반환

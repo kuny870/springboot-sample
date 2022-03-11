@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,17 +25,24 @@ public class UserController {
     @Lazy
     private final UserService userService;
 
+    // OAuth2 테스트
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/oauth2/auth")
+    public Object greeting3(@AuthenticationPrincipal Object user) {
+        return user;
+    }
+
     // JWT 테스트
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/greeting")
-    public String greeting1() {
+    public String greeting2() {
         return "hello";
     }
 
     // 테스트
     @PreAuthorize("@nameCheck.check(#name)")
     @GetMapping("/greeting/{name}")
-    public String greeting2(@PathVariable String name) {
+    public String greeting1(@PathVariable String name) {
         return "hello";
     }
 
@@ -135,13 +143,13 @@ public class UserController {
 
     /**
      * 회원 가입하기
-     * @param userInfo
+     * @param user
      * @return
      */
     @PostMapping("/user/save")
-    public ModelAndView signup(User userInfo) throws DuplicateMemberException { // 회원 추가
+    public ModelAndView signup(User user) throws DuplicateMemberException { // 회원 추가
         ModelAndView mav = new ModelAndView();
-        Long result = userService.save(userInfo);
+        Long result = userService.save(user);
         if(result == 0L) {
             mav.setViewName("signupDuplicateId");
             mav.addObject("signupError", true);
