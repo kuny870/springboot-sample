@@ -10,7 +10,7 @@ Was : tomcat <br>
 Jdk : 1.8 <br>
 Logging : logbak (TODO) <br>
 Response : json <br>
-인증,권한 : Spring security, OAuth2(google,naver) 적용 <br>
+인증,권한 : Spring security5, OAuth2(google,naver) 적용 <br>
 UI : bootscrap <br>
 
 # 구현 로직
