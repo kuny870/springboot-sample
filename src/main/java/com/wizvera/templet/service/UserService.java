@@ -39,7 +39,8 @@ public class UserService implements UserDetailsService {
      * @return
      */
     @Secured({"ROLE_ADMIN", "ROLE_RUN_AS_ADMIN"})
-    @PostFilter("filterObject.state == T(com.wizvera.templet.model.User.State).NORMAL")
+//    @PostFilter("filterObject.state == T(com.wizvera.templet.model.User.State).NORMAL")
+    @PostFilter("filterObject.delYn == 'N'")
     public List<User> getUsers() {
         return userRepository.findAll();
     }

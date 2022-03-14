@@ -1,6 +1,6 @@
 package com.wizvera.templet.model;
 
-import lombok.AccessLevel;
+import com.wizvera.templet.model.converter.UserStatusConverter;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,25 +35,24 @@ public class User implements UserDetails {
     @Column(name = "auth")
     private String auth;
 
-    @Column(name = "state")
-    private State state;
+    @Column(name = "status", columnDefinition = "int DEFAULT 0")
+    @Convert(converter = UserStatusConverter.class)
+    private UserStatus status;    // 유저 상태
 
     @Column(name = "enabled")
     private boolean enabled;
 
-    public static enum State {
-        NORMAL, // 일반 사용자
-        EXPIRATION // 계정 만료 사용자
-    }
-
-
+//    public static enum State {
+//        NORMAL, // 일반 사용자
+//        EXPIRATION // 계정 만료 사용자
+//    }
 
     @Column(name = "del_yn", columnDefinition = "CHAR(1) DEFAULT 'N'")
     private String delYn;
 
 
     @Builder
-    public User(String email, String password, String name, String auth, String delYn, State state) {
+    public User(String email, String password, String name, String auth, String delYn, UserStatus status) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -63,7 +62,7 @@ public class User implements UserDetails {
             this.auth = auth;
         }
         this.delYn = "N";
-        this.state = State.NORMAL;
+        this.status = status;
     }
 
     // 사용자의 권한을 콜렉션 형태로 반환
