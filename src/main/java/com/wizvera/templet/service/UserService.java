@@ -7,11 +7,11 @@ import com.wizvera.templet.repository.UserRepository;
 import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,7 +22,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -34,6 +33,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     private SpOAuth2UserRepository oAuth2UserRepository;
 
+
     /**
      * 사용자 전체 불러오기
      * @return
@@ -43,6 +43,18 @@ public class UserService implements UserDetailsService {
     @PostFilter("filterObject.delYn == 'N'")
     public List<User> getUsers() {
         return userRepository.findAll();
+    }
+
+
+    /**
+     * 사용자 전체 불러오기 Paging
+     * @return
+     */
+    @Secured({"ROLE_ADMIN", "ROLE_RUN_AS_ADMIN"})
+//    @PostFilter("filterObject.state == T(com.wizvera.templet.model.User.State).NORMAL")
+//    @PostFilter("filterObject.delYn == 'N'")
+    public Page<User> getUserList(PageRequest pageRequest) {
+        return userRepository.findAll(pageRequest);
     }
 
     /**
@@ -79,6 +91,7 @@ public class UserService implements UserDetailsService {
 
         return userRepository.save(User.builder()
             .email(user.getEmail())
+            .name(user.getName())
             .auth(user.getAuth())
             .password(user.getPassword()).build()).getId();
     }

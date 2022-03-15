@@ -4,7 +4,8 @@ import com.wizvera.templet.model.User;
 import com.wizvera.templet.service.UserService;
 import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +23,8 @@ import javax.servlet.http.HttpSession;
 @RequiredArgsConstructor
 public class UserController {
 
-    @Lazy
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final UserService userService;
 
     // OAuth2 테스트
@@ -49,6 +51,13 @@ public class UserController {
     // 홈페이지
     @GetMapping("/")
     public ModelAndView main(ModelAndView mav, Model model, HttpSession session) {
+
+        logger.trace(">>>>>>>>>>>>>>>>>>>>>>>>>>> Trace Level 테스트");
+        logger.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>> Debug Level 테스트");
+        logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>> Info Level 테스트");
+        logger.warn(">>>>>>>>>>>>>>>>>>>>>>>>>>> Warn Level 테스트");
+        logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>> Error Level 테스트");
+
         mav.addObject("sessionId", session.getId());
         mav.setViewName("index");
         return mav;
@@ -113,25 +122,6 @@ public class UserController {
 //        }
         mav.setViewName("UserPage");
         return mav;
-    }
-
-    // 관리자 페이지
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    @GetMapping("/admin-page")
-    public ModelAndView adminPage(ModelAndView mav) {
-        mav.setViewName("AdminPage");
-        return mav;
-    }
-
-
-    /**
-     * 회원 전체 불러오기
-     * @return
-     */
-//    @Secured({"SCHOOL_ADMIN"})
-    @GetMapping("/admin/userList")
-    public ResponseEntity getUsers() {
-        return ResponseEntity.ok(userService.getUsers());
     }
 
     @Secured({"ROLE_USER", "RUN_AS_ADMIN"})
