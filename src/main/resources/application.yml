@@ -1,8 +1,8 @@
 server:
   port: 8080
-  servlet:
-    session:
-      timeout:
+#  servlet:
+#    session:
+#      timeout:
 
 logging:
   level:
@@ -37,7 +37,7 @@ spring:
       idle-timeout: 10000
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     # 개발
     properties:

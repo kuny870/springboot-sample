@@ -28,6 +28,8 @@
             </div>
 
             <button class="btn btn-lg btn-primary btn-block" type="submit"> 로그인 </button>
+            <img th:src="@{'/images/btn_google.png'}" th:onclick="|location.href='@{/oauth2/authorization/google}'|" style="cursor: pointer; width: 100%; height: 55px; margin-bottom: 5px;">
+            <img th:src="@{'/images/btn_naver.png'}" th:onclick="|location.href='@{/oauth2/authorization/naver}'|" style="cursor: pointer; width: 100%; height: 55px; margin-bottom: 5px;">
             <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/signup'}"> 회원 가입 </a>
             <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/'}"> 메인 페이지 </a>
             <div class="error-message" th:if="${loginError}">
