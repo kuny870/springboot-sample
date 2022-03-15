@@ -21,4 +21,4 @@ UI : bootscrap <br>
 5. 전체 사용자 불러오기(테이블 형식) <br>
 6. OAuth2 로그인 (google, naver) <br>
 7. OAuth2 사용자 정보 보여주기 <br>
-8. 간단 스케쥴러 <br>
+8. 간단 스케쥴러 (TODO) <br>
