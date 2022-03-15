@@ -34,19 +34,18 @@ public class SpOAuth2SuccessHandler implements AuthenticationSuccessHandler {
             // google
             SpOAuth2User oauth = SpOAuth2User.Provider.google.convert((OidcUser) principal);
             User user = userService.load(oauth);
+            request.getRequestDispatcher("/").forward(request, response);
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities())
             );
-
-
         }else if(principal instanceof OAuth2User) {
             // naver
-            SpOAuth2User oauth = SpOAuth2User.Provider.google.convert((OAuth2User) principal);
+            SpOAuth2User oauth = SpOAuth2User.Provider.naver.convert((OAuth2User) principal);
             User user = userService.load(oauth);
+            request.getRequestDispatcher("/").forward(request, response);
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities())
             );
         }
-        request.getRequestDispatcher("/").forward(request, response);
     }
 }

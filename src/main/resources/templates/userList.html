@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title class="center"> 회원 목록  </title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{/css/general.css}">
+</head>
+<body class="userList-form">
+<div>
+    <a class="btn btn-lg btn-secondary btn-block2" th:href="@{'/admin-page'}"> 관리자 페이지 </a>
+    <main role="main">
+        <div class="title-bar">
+            <h4> 회원 목록 </h4>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col"> No. </th>
+                <th scope="col"> 아이디 </th>
+                <th scope="col"> 이름 </th>
+                <th scope="col"> 상태 </th>
+                <th scope="col"> 권한 </th>
+                <th scope="col"> 가입날짜 </th>
+                <th scope="col"> 수정날짜 </th>
+                <th scope="col"> 삭제여부 </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${page?.content}" th:object="${user}">
+
+                <td th:text="*{id}"> No </td>
+                <td th:text="*{email}"> 아이디 </td>
+                <td th:text="*{name}"> 이름 </td>
+                <td th:text="*{status.description}"> 상태 </td>
+                <td>
+                    <div th:each="auth : *{authorities}" th:object="${auth}">
+                        <span th:text="*{authority}">권한</span>
+                    </div>
+                </td>
+                <td th:text="*{createdDate}"> 가입날짜 </td>
+                <td th:text="*{modifiedDate}"> 수정날짜 </td>
+                <td th:text="*{delYn}"> 삭제여부 </td>
+
+            </tr>
+            </tbody>
+        </table>
+
+<!--        <div th:replace="/paging.html :: paging(path='/admin/userList', page=${page})" />-->
+
+        <div th:if="${page != null}">
+            <nav aria-label="Page navigation example" th:with="start=${T(Math).floor(page.number/10)*10 + 1}">
+
+                <ul class="pagination justify-content-center"
+                    th:with="last=(${start + 9 < page.totalPages ? start + 9 : page.totalPages})">
+                    <li class="page-item">
+                        <a class="page-link" th:href="@{/admin/userList(pageNum=1)}" aria-label="First">
+                            <span aria-hidden="true">First</span>
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:class="${page.first} ? 'disabled'">
+                        <a class="page-link" th:href="${page.first} ? '#' :@{/admin/userList(pageNum=${page.number})}" aria-label="Previous">
+                            <span aria-hidden="true">&lt;</span>
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:each="p: ${#numbers.sequence(start, last)}" th:class="${p == page.number + 1} ? 'active'">
+                        <a class="page-link"  th:text="${p}" th:href="@{/admin/userList(pageNum=${p})}"></a>
+                    </li>
+
+                    <li class="page-item" th:class="${page.last} ? 'disabled'">
+                        <a class="page-link"  th:href="${page.last} ? '#' : @{/admin/userList(pageNum=${page.number + 2})}" aria-label="Next">
+                            <span aria-hidden="true">&gt;</span>
+                        </a>
+                    </li>
+
+                    <li class="page-item">
+                        <a class="page-link" th:href="@{/admin/userList(pageNum=${page.totalPages})}" aria-label="Last">
+                            <span aria-hidden="true">Last</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+    </main>
+
+</div>
+</body>
+</html>

@@ -4,6 +4,8 @@ import com.wizvera.templet.model.converter.UserStatusConverter;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +18,9 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @Entity
-public class User implements UserDetails {
+@DynamicInsert
+@DynamicUpdate
+public class User extends TimeEntity implements UserDetails {
 
     @Id
     @Column(name = "id")
@@ -32,7 +36,7 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "auth")
+    @Column(name = "auth", columnDefinition = "varchar(255) NOT NULL DEFAULT 'ROLE_USER'")
     private String auth;
 
     @Column(name = "status", columnDefinition = "int DEFAULT 0")
@@ -47,7 +51,7 @@ public class User implements UserDetails {
 //        EXPIRATION // 계정 만료 사용자
 //    }
 
-    @Column(name = "del_yn", columnDefinition = "CHAR(1) DEFAULT 'N'")
+    @Column(name = "del_yn", columnDefinition = "CHAR(1) NOT NULL DEFAULT 'N'")
     private String delYn;
 
 
@@ -115,4 +119,5 @@ public class User implements UserDetails {
         // 계정이 사용 가능한지 확인하는 로직
         return true; // true -> 사용 가능
     }
+
 }

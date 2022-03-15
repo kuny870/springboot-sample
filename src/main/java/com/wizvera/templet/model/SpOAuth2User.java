@@ -1,12 +1,14 @@
 package com.wizvera.templet.model;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static java.lang.String.format;
@@ -17,6 +19,8 @@ import static java.lang.String.format;
 @Builder
 @Entity
 @Table(name="sp_oauth2_user")
+@DynamicInsert
+@DynamicUpdate
 public class SpOAuth2User {
 
     @Id
@@ -26,8 +30,15 @@ public class SpOAuth2User {
 
     private String name;
     private String email;
-    private LocalDateTime created;
+    @CreatedDate
+    private String created;
     private Provider provider;
+
+    /* 해당 엔티티를 저장하기 이전에 실행 */
+    @PrePersist
+    public void onPrePersist(){
+        this.created = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+    }
 
     public static enum Provider {
         google {
@@ -37,7 +48,6 @@ public class SpOAuth2User {
                         .provider(google)
                         .email(user.getAttribute("email"))
                         .name(user.getAttribute("name"))
-                        .created(LocalDateTime.now())
                         .build();
             }
         },
