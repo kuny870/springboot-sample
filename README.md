@@ -8,7 +8,7 @@ Build Tool : Gradle <br>
 DB : MySql, JPA / Hibernate <br>
 Was : tomcat <br>
 Jdk : 1.8 <br>
-Logging : logbak (TODO) <br>
+Logging : logback <br>
 Response : json <br>
 인증,권한 : Spring security5, OAuth2(google,naver) 적용 <br>
 UI : bootscrap <br>
