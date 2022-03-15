@@ -8,7 +8,7 @@ Build Tool : Gradle <br>
 DB : MySql, JPA / Hibernate <br>
 Was : tomcat <br>
 Jdk : 1.8 <br>
-Logging : logbak (TODO) <br>
+Logging : logback <br>
 Response : json <br>
 인증,권한 : Spring security5, OAuth2(google,naver) 적용 <br>
 UI : bootscrap <br>
@@ -18,8 +18,8 @@ UI : bootscrap <br>
 2. 로그인 <br>
 3. 로그인 유지 (remember me) <br>
 4. 사용자 권한별 페이지 분기 <br>
-5. 전체 사용자 불러오기 <br>
+5. 전체 사용자 불러오기(테이블 형식) <br>
 6. OAuth2 로그인 (google, naver) <br>
 7. OAuth2 사용자 정보 보여주기 <br>
-8. 사용자별 권한 부여 (TODO) <br>
-9. 게시판 테이블 데이터 불러오기 (TODO) <br>
+8. 간단 스케쥴러 (TODO) <br>
+9. 사용자별 권한 부여 (TODO) <br>
