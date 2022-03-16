@@ -2,9 +2,7 @@ package com.wizvera.templet.repository;
 
 import com.wizvera.templet.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -13,9 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //    User findByUsername(@Param("username") String username);
 
     Optional<User> findByEmail(String username);
-
-    @Query(value = "update user set status = 1 where date_format(created_date, '%Y%m%d') < date_format(now(), '%Y%m%d')", nativeQuery = true)
-    void userExpiring();
 
 //    @Modifying
 //    @Query("UPDATE user u SET u.delYn = 'Y' WHERE u.loginId = :loginId")
