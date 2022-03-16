@@ -1,11 +1,11 @@
 package com.wizvera.templet.repository;
 
-import com.wizvera.templet.model.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+        import com.wizvera.templet.model.User;
+        import org.springframework.data.jpa.repository.JpaRepository;
+        import org.springframework.data.jpa.repository.Modifying;
+        import org.springframework.data.jpa.repository.Query;
 
-import javax.transaction.Transactional;
+        import javax.transaction.Transactional;
 
 public interface ScheduleRepository extends JpaRepository<User, Long> {
 
