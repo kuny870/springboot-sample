@@ -2,6 +2,8 @@ package com.wizvera.templet.config;
 
 import com.wizvera.templet.config.OAuth2.SpOAuth2SuccessHandler;
 import com.wizvera.templet.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
@@ -38,6 +40,8 @@ import java.util.Collection;
 @EnableWebSecurity(debug = true)
 //@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter;
 
@@ -77,6 +81,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     PasswordEncoder passwordEncoder(){
         return NoOpPasswordEncoder.getInstance();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -188,24 +197,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         )
                         ;
     }
-
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-
-//    @Bean
-//    @Override
-//    public UserDetailsService userDetailsService() {
-//        UserDetails user =
-//                User.withDefaultPasswordEncoder()
-//                        .username("kuny87@naver.com")
-//                        .password("1234")
-//                        .roles("USER")
-//                        .build();
-//
-//        return new InMemoryUserDetailsManager(user);
-//    }
 
 }
