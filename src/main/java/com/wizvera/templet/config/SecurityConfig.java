@@ -141,6 +141,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http
+                .csrf().disable()
                 .authorizeRequests(request-> {
                     request
                             .antMatchers("/", "/signup", "/user/save", "/auth", "/greeting/**").permitAll() // 모든 허용 url
