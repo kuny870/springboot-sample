@@ -43,6 +43,9 @@ public class User extends TimeEntity implements UserDetails {
     @Convert(converter = UserStatusConverter.class)
     private UserStatus status;    // 유저 상태
 
+    @Column(name = "approval", columnDefinition = "CHAR(1) NOT NULL DEFAULT 'N'")
+    private String approval;    // 승인 상태
+
     @Column(name = "enabled")
     private boolean enabled;
 

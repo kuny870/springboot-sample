@@ -4,7 +4,7 @@
 }
 .userList-form {
   margin: auto;
-  max-width: 770px;
+  max-width: 1100px;
   text-align: center;
 }
 
@@ -28,4 +28,28 @@
   height: 49px;
   margin-bottom: 8px;
   border-radius: 0.3em;
+}
+
+.btn-remove {
+  color: #fff;
+  background-color: red;
+  border-color: red;
+}
+
+.btn-restore {
+  color: #fff;
+  background-color: #3874CB;
+  border-color: #3874CB;
+}
+
+.btn-approval {
+  color: #fff;
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+}
+
+.btn-approval-cancel {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
 }
