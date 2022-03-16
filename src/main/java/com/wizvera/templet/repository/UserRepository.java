@@ -14,9 +14,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String username);
 
-    @Query(value = "update user set status = 1 where date_format(created_date, '%Y%m%d') < date_format(now(), '%Y%m%d')", nativeQuery = true)
-    void userExpiring();
-
 //    @Modifying
 //    @Query("UPDATE user u SET u.delYn = 'Y' WHERE u.loginId = :loginId")
 //    void passwdFail(@Param("loginId") String loginId);
