@@ -1,6 +1,7 @@
 package com.wizvera.templet.model;
 
 import com.wizvera.templet.model.converter.UserStatusConverter;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,27 +25,33 @@ public class User extends TimeEntity implements UserDetails {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ApiModelProperty(value = "사용자의 아이디", example = "admin@naver.com", required = true)
     @Column(name = "email", unique = true)
     private String email;
 
+    @ApiModelProperty(value = "사용자의 이름", example = "홍길동", required = true)
     @Column(name = "name")
     private String name;
 
+    @ApiModelProperty(value = "사용자의 비밀번호", example = "1234", required = true)
     @Column(name = "password")
     private String password;
 
+    @ApiModelProperty(value = "사용자의 권한", example = "ROLE_ADMIN")
     @Column(name = "auth", columnDefinition = "varchar(255) NOT NULL DEFAULT 'ROLE_USER'")
     private String auth;
 
+    @ApiModelProperty(value = "사용자의 계정상태", example = "1")
     @Column(name = "status", columnDefinition = "int DEFAULT 0")
     @Convert(converter = UserStatusConverter.class)
-    private UserStatus status;    // 유저 상태
+    private UserStatus status;
 
+    @ApiModelProperty(value = "사용자의 승인상태", example = "Y")
     @Column(name = "approval", columnDefinition = "CHAR(1) NOT NULL DEFAULT 'N'")
-    private String approval;    // 승인 상태
+    private String approval;
 
     @Column(name = "enabled")
     private boolean enabled;
@@ -54,6 +61,7 @@ public class User extends TimeEntity implements UserDetails {
 //        EXPIRATION // 계정 만료 사용자
 //    }
 
+    @ApiModelProperty(value = "사용자의 삭제여부", example = "N")
     @Column(name = "del_yn", columnDefinition = "CHAR(1) NOT NULL DEFAULT 'N'")
     private String delYn;
 
