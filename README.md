@@ -5,8 +5,8 @@ Spring boot, Jpa, Spring security 초기 셋팅 샘플
 IDE : Intellij 2019.3.5 version <br>
 Framework : Spring boot 2.2.2 RELEASE <br>
 Build Tool : Gradle <br>
-DB : MySql, JPA / Hibernate <br>
-Was : tomcat <br>
+DB : (DBMS) MySql, JPA / Hibernate <br>
+Was : tomcat 8.5 <br>
 Jdk : 1.8 <br>
 Logging : logback <br>
 api 문서화 : swagger <br>
