@@ -9,6 +9,7 @@ DB : MySql, JPA / Hibernate <br>
 Was : tomcat <br>
 Jdk : 1.8 <br>
 Logging : logback <br>
+api 문서화 : swagger <br>
 Response : json <br>
 인증,권한 : Spring security5, OAuth2(google,naver) 적용 <br>
 UI : bootscrap <br>
