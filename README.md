@@ -12,7 +12,7 @@ Logging : logback <br>
 api 문서화 : swagger <br>
 Response : json <br>
 인증,권한 : Spring security5, OAuth2(google,naver) 적용 <br>
-UI : bootscrap <br>
+UI : bootstrap <br>
 
 # 구현 로직
 1. 회원가입 (관리자, 일반 유저) <br>
