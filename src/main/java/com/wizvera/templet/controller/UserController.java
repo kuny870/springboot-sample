@@ -2,6 +2,8 @@ package com.wizvera.templet.controller;
 
 import com.wizvera.templet.model.User;
 import com.wizvera.templet.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -18,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 
+@Api(tags = {"유저 관련한 정보를 제공하는 Controller"})
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
@@ -27,28 +30,49 @@ public class UserController {
 
     private final UserService userService;
 
-    // OAuth2 테스트
+    /**
+     * OAuth2 테스트
+     * @param user
+     * @return
+     */
+    @ApiOperation(value = "OAuth2 테스트")
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/oauth2/auth")
     public Object greeting3(@AuthenticationPrincipal Object user) {
         return user;
     }
 
-    // JWT 테스트
+    /**
+     * JWT 테스트
+     * @return
+     */
+    @ApiOperation(value = "JWT 테스트")
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/greeting")
     public String greeting2() {
         return "hello";
     }
 
-    // 테스트
+    /**
+     * PreAuthorize 테스트
+     * @param name
+     * @return
+     */
+    @ApiOperation(value = "PreAuthorize 테스트")
     @PreAuthorize("@nameCheck.check(#name)")
     @GetMapping("/greeting/{name}")
     public String greeting1(@PathVariable String name) {
         return "hello";
     }
 
-    // 홈페이지
+    /**
+     * 메인페이지
+     * @param mav
+     * @param model
+     * @param session
+     * @return
+     */
+    @ApiOperation(value = "메인페이지")
     @GetMapping("/")
     public ModelAndView main(ModelAndView mav, Model model, HttpSession session) {
 
@@ -63,21 +87,36 @@ public class UserController {
         return mav;
     }
 
-    // 로그인 페이지
+    /**
+     * 로그인 페이지
+     * @param mav
+     * @return
+     */
+    @ApiOperation(value = "로그인 페이지")
     @GetMapping("login")
     public ModelAndView login(ModelAndView mav) {
         mav.setViewName("loginForm");
         return mav;
     }
 
-    // 로그인이 필요합니다 페이지
+    /**
+     * 로그인이 필요합니다 페이지
+     * @param mav
+     * @return
+     */
+    @ApiOperation(value = "로그인이 필요합니다 페이지")
     @GetMapping("login-required")
     public ModelAndView loginRequired(ModelAndView mav) {
         mav.setViewName("LoginRequired");
         return mav;
     }
 
-    // 로그인 에러 페이지
+    /**
+     * 로그인 에러 페이지
+     * @param mav
+     * @return
+     */
+    @ApiOperation(value = "로그인 에러 페이지")
     @GetMapping("/login-error")
     public ModelAndView loginError(ModelAndView mav) {
         mav.addObject("loginError", true);
@@ -85,35 +124,59 @@ public class UserController {
         return mav;
     }
 
-    // 회원가입 페이지
+    /**
+     * 회원가입 페이지
+     * @param mav
+     * @return
+     */
+    @ApiOperation(value = "회원가입 페이지")
     @GetMapping("/signup")
     public ModelAndView signup(ModelAndView mav) {
         mav.setViewName("signup");
         return mav;
     }
 
-    // 권한 디테일 정보 페이지
+    /**
+     * 권한 디테일 정보 페이지
+     * @return
+     */
+    @ApiOperation(value = "권한 디테일 정보 페이지")
     @ResponseBody
     @GetMapping("/auth")
     public Authentication auth() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
-    // 접근 거부 페이지
+    /**
+     * 접근 거부 페이지
+     * @param mav
+     * @return
+     */
+    @ApiOperation(value = "접근 거부 페이지")
     @GetMapping("/access-denied")
     public ModelAndView accessDenied(ModelAndView mav) {
         mav.setViewName("AccessDenied");
         return mav;
     }
 
-    // 접근 거부 페이지2
+    /**
+     * 접근 거부 페이지2
+     * @param mav
+     * @return
+     */
+    @ApiOperation(value = "접근 거부 페이지2")
     @GetMapping("/access-denied2")
     public ModelAndView accessDenied2(ModelAndView mav) {
         mav.setViewName("AccessDenied2");
         return mav;
     }
 
-    // 유저 페이지
+    /**
+     * 유저 페이지
+     * @param mav
+     * @return
+     */
+    @ApiOperation(value = "유저 페이지")
 //    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @GetMapping("/user-page")
     public ModelAndView userPage(ModelAndView mav) {
@@ -124,6 +187,11 @@ public class UserController {
         return mav;
     }
 
+    /**
+     * 리턴 모든 유저 by JSON
+     * @return
+     */
+    @ApiOperation(value = "리턴 모든 유저 by JSON")
     @Secured({"ROLE_USER", "RUN_AS_ADMIN"})
     @GetMapping("/user/userListByUser")
     public ResponseEntity userListByUser() {
@@ -136,6 +204,7 @@ public class UserController {
      * @param user
      * @return
      */
+    @ApiOperation(value = "회원 가입하는 POST 매핑 함수")
     @PostMapping("/user/save")
     public ModelAndView signup(User user) throws DuplicateMemberException { // 회원 추가
         ModelAndView mav = new ModelAndView();
@@ -155,6 +224,7 @@ public class UserController {
      * @param user
      * @return
      */
+    @ApiOperation(value = "회원 정보 수정하는 POST 매핑 함수")
     @PostMapping("/user/update")
     public ModelAndView update(User user) {  // 회원 수정
         userService.updateUser(user);
@@ -168,6 +238,7 @@ public class UserController {
      * @param user
      * @return
      */
+    @ApiOperation(value = "회원 탈퇴하는 POST 매핑 함수")
     @PostMapping("/user/remove")
     public ModelAndView remove(User user) {  // 회원 탈퇴
         userService.removeUser(user);

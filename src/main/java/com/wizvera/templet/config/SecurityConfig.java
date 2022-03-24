@@ -14,6 +14,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -38,7 +39,7 @@ import java.util.Collection;
 
 @Configuration
 @EnableWebSecurity(debug = true)
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -153,6 +154,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests(request-> {
                     request
+                            .antMatchers("/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**").permitAll()
                             .antMatchers("/", "/signup", "/user/save", "/auth", "/greeting/**").permitAll() // 모든 허용 url
                             .antMatchers("/admin/**").hasRole("ADMIN")
                             .antMatchers("/user/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
@@ -187,6 +189,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             .tokenRepository(tokenRepository())     // 로그인 유지 토큰 저장을 위한 DB 생성
                         .and()
                 // 세션 관리
+
                         .sessionManagement(
                                 s->s
 //                                        .sessionCreationPolicy(p-> SessionCreationPolicy.STATELESS)
