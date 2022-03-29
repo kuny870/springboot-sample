@@ -60,15 +60,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.dataSource = dataSource;
     }
 
-    // 로그인 시 비밀번호 체크
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService)
-                // 해당 서비스(userService)에서는 UserDetailsService를 implements해서
-                // loadUserByUsername() 구현해야함 (서비스 참고)
-                .passwordEncoder(new BCryptPasswordEncoder());
-    }
-
     // static 폴더 안의 파일들 접근 허용
     @Override
     public void configure(WebSecurity web) {
@@ -77,6 +68,71 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(
                 PathRequest.toStaticResources().atCommonLocations()
         );
+    }
+
+    // security config 설정
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+
+        http
+                .csrf().disable()       // csrf : 사이트간 요청 위조
+                .authorizeRequests(request-> {
+                    request
+                            .antMatchers("/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**").permitAll()
+                            .antMatchers("/", "/signup", "/user/save", "/auth", "/greeting/**").permitAll() // 모든 허용 url
+                            .antMatchers("/admin/**").hasRole("ADMIN")
+                            .antMatchers("/user/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
+                            .mvcMatchers("/greeting/{name}").access("@nameCheck.check(#name)")
+//                            .mvcMatchers("/user-page").hasRole("ADMIN")
+                            .anyRequest().authenticated()       // 권한이 있어야 허용
+//                            .accessDecisionManager(filAccessDecisionManager())    // accessDecisionManager : 권한 위원회
+                            ;
+                        })
+                        .formLogin(
+                                login->login.loginPage("/login")        // 로그인 페이지
+                                .permitAll()
+                                .defaultSuccessUrl("/", false)  // 로그인 성공 시 이동 페이지  / alwaysUse 옵션 true : 페이지 url 접근 시도 후 로그인 시 해당 페이지 유지
+                                .failureUrl("/login-error")             // 로그인 실패 시 이동 페이지
+                                .authenticationDetailsSource(customAuthDetails)     // 권한 상세 정보 보기
+                        )
+                        .oauth2Login(oauth2->oauth2                 // OAuth2 로그인 (google, naver 로그인)
+                                .successHandler(successHandler)
+                        )
+                        .logout(logout->logout.logoutSuccessUrl("/"))       // 로그아웃
+                        .exceptionHandling(error->
+                                error
+//                                        .accessDeniedPage("/access-denied")     // 예외 발생 시 이동 페이지
+                                        .accessDeniedHandler(new CustomDeniedHandler())     // 접근 권한 없을때 핸들러 작동
+                                        .authenticationEntryPoint(new CustomEntryPoint())   // 로그인 안하고 상세 url 접근시 핸들러 작동
+                        )
+
+                // 로그인 유지하기
+                .rememberMe()
+                            .key("hello")           // 아무 키 값 고정
+                            .userDetailsService(userDetailsService)
+                            .tokenRepository(tokenRepository())     // 로그인 유지 토큰 저장을 위한 DB 생성
+                        .and()
+                // 세션 관리
+
+                        .sessionManagement(
+                                s->s
+//                                        .sessionCreationPolicy(p-> SessionCreationPolicy.STATELESS)
+                                        .sessionFixation(sessionFixationConfigurer -> sessionFixationConfigurer.changeSessionId())
+                                .maximumSessions(1)     // 최대 유지 세션 갯수
+                                .maxSessionsPreventsLogin(false)    // true : 기존 세션 유지, false : 신규 세션 유지
+                                .expiredUrl("/session-expired")     // 세션 만료된 후 페이지 이동
+                        )
+                        ;
+    }
+
+
+    // 로그인 시 비밀번호 체크
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userService)
+                // 해당 서비스(userService)에서는 UserDetailsService를 implements해서
+                // loadUserByUsername() 구현해야함 (서비스 참고)
+                .passwordEncoder(new BCryptPasswordEncoder());
     }
 
     @Bean
@@ -146,59 +202,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private NameCheck nameCheck;
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-
-        http
-                .csrf().disable()
-                .authorizeRequests(request-> {
-                    request
-                            .antMatchers("/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**").permitAll()
-                            .antMatchers("/", "/signup", "/user/save", "/auth", "/greeting/**").permitAll() // 모든 허용 url
-                            .antMatchers("/admin/**").hasRole("ADMIN")
-                            .antMatchers("/user/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
-                            .mvcMatchers("/greeting/{name}").access("@nameCheck.check(#name)")
-//                            .mvcMatchers("/user-page").hasRole("ADMIN")
-                            .anyRequest().authenticated()       // 권한이 있어야 허용
-//                            .accessDecisionManager(filAccessDecisionManager())    // accessDecisionManager : 권한 위원회
-                            ;
-                        })
-                        .formLogin(
-                                login->login.loginPage("/login")        // 로그인 페이지
-                                .permitAll()
-                                .defaultSuccessUrl("/", false)  // 로그인 성공 시 이동 페이지  / alwaysUse 옵션 true : 페이지 url 접근 시도 후 로그인 시 해당 페이지 유지
-                                .failureUrl("/login-error")             // 로그인 실패 시 이동 페이지
-                                .authenticationDetailsSource(customAuthDetails)     // 권한 상세 정보 보기
-                        )
-                        .oauth2Login(oauth2->oauth2                 // OAuth2 로그인 (google, naver 로그인)
-                                .successHandler(successHandler)
-                        )
-                        .logout(logout->logout.logoutSuccessUrl("/"))       // 로그아웃
-                        .exceptionHandling(error->
-                                error
-//                                        .accessDeniedPage("/access-denied")     // 예외 발생 시 이동 페이지
-                                        .accessDeniedHandler(new CustomDeniedHandler())     // 접근 권한 없을때 핸들러 작동
-                                        .authenticationEntryPoint(new CustomEntryPoint())   // 로그인 안하고 상세 url 접근시 핸들러 작동
-                        )
-
-                // 로그인 유지하기
-                .rememberMe()
-                            .key("hello")           // 아무 키 값 고정
-                            .userDetailsService(userDetailsService)
-                            .tokenRepository(tokenRepository())     // 로그인 유지 토큰 저장을 위한 DB 생성
-                        .and()
-                // 세션 관리
-
-                        .sessionManagement(
-                                s->s
-//                                        .sessionCreationPolicy(p-> SessionCreationPolicy.STATELESS)
-                                        .sessionFixation(sessionFixationConfigurer -> sessionFixationConfigurer.changeSessionId())
-                                .maximumSessions(1)     // 최대 유지 세션 갯수
-                                .maxSessionsPreventsLogin(false)    // true : 기존 세션 유지, false : 신규 세션 유지
-                                .expiredUrl("/session-expired")     // 세션 만료된 후 페이지 이동
-                        )
-                        ;
-    }
 
 }

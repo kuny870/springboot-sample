@@ -28,17 +28,25 @@ public class User extends TimeEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ApiModelProperty(value = "사용자의 아이디", example = "admin@naver.com", required = true)
-    @Column(name = "email", unique = true)
+    @ApiModelProperty(value = "사용자의 아이디", example = "admin", required = true)
+    @Column(name = "user_id", unique = true)
+    private String userId;
+
+    @ApiModelProperty(value = "사용자의 비밀번호", example = "1234")
+    @Column(name = "password")
+    private String password;
+
+    @ApiModelProperty(value = "사용자의 이메일", example = "admin@naver.com")
+    @Column(name = "email")
     private String email;
 
-    @ApiModelProperty(value = "사용자의 이름", example = "홍길동", required = true)
+    @ApiModelProperty(value = "사용자의 이름", example = "홍길동")
     @Column(name = "name")
     private String name;
 
-    @ApiModelProperty(value = "사용자의 비밀번호", example = "1234", required = true)
-    @Column(name = "password")
-    private String password;
+    @ApiModelProperty(value = "사용자의 전화번호", example = "010-1234-1234")
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     @ApiModelProperty(value = "사용자의 권한", example = "ROLE_ADMIN")
     @Column(name = "auth", columnDefinition = "varchar(255) NOT NULL DEFAULT 'ROLE_USER'")
@@ -67,10 +75,12 @@ public class User extends TimeEntity implements UserDetails {
 
 
     @Builder
-    public User(String email, String password, String name, String auth, String delYn, UserStatus status) {
-        this.email = email;
+    public User(String userId, String email, String password, String name, String phoneNumber, String auth, String delYn, UserStatus status) {
+        this.userId = userId;
         this.password = password;
         this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
         if(auth == null) {
             this.auth = "ROLE_USER";
         }else {
