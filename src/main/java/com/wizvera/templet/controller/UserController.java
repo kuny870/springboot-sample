@@ -1,6 +1,9 @@
 package com.wizvera.templet.controller;
 
 import com.wizvera.templet.model.User;
+import com.wizvera.templet.model.response.Message;
+import com.wizvera.templet.model.response.StatusEnum;
+import com.wizvera.templet.repository.UserRepository;
 import com.wizvera.templet.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -8,17 +11,21 @@ import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 @Api(tags = {"유저 관련한 정보를 제공하는 Controller"})
 @RestController
@@ -30,40 +37,95 @@ public class UserController {
 
     private final UserService userService;
 
+    private final UserRepository userRepository;
+
+
     /**
-     * OAuth2 테스트
+     * 회원 상세 불러오기
+     * @return
+     */
+    @ApiOperation(value = "회원 상세 불러오기")
+    @GetMapping("/user/detail")
+    public ResponseEntity<Message> getUserDetail(User user) {
+
+        Optional<User> optionalUser = userRepository.findByUserId(user.getUserId());
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+        message.setData(optionalUser);
+
+        return ResponseEntity.ok(message);
+    }
+
+    /**
+     * 회원 가입하기
      * @param user
      * @return
      */
-    @ApiOperation(value = "OAuth2 테스트")
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/oauth2/auth")
-    public Object greeting3(@AuthenticationPrincipal Object user) {
-        return user;
+    @ApiOperation(value = "회원 가입하는 POST 매핑 함수")
+    @PostMapping("/user/create")
+    public ResponseEntity<Message> signup(User user) throws DuplicateMemberException { // 회원 추가
+
+        userService.save(user);
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+
+        return ResponseEntity.ok(message);
     }
 
     /**
-     * JWT 테스트
+     * 회원정보 수정하기
+     * @param user
      * @return
      */
-    @ApiOperation(value = "JWT 테스트")
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/greeting")
-    public String greeting2() {
-        return "hello";
+    @ApiOperation(value = "회원 정보 수정하는 POST 매핑 함수")
+    @PostMapping("/user/update")
+    public ResponseEntity<Message> update(User user) {  // 회원 수정
+
+        userService.updateUser(user);
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+
+        return ResponseEntity.ok(message);
     }
 
     /**
-     * PreAuthorize 테스트
-     * @param name
+     * 회원 탈퇴하기
+     * @param id
      * @return
      */
-    @ApiOperation(value = "PreAuthorize 테스트")
-    @PreAuthorize("@nameCheck.check(#name)")
-    @GetMapping("/greeting/{name}")
-    public String greeting1(@PathVariable String name) {
-        return "hello";
+    @ApiOperation(value = "회원 탈퇴하는 POST 매핑 함수")
+    @PostMapping("/user/delete")
+    public ResponseEntity<Message> delete(Long id) {  // 회원 탈퇴
+
+        userService.deleteUser(id);
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+
+        return ResponseEntity.ok(message);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 메인페이지
@@ -142,7 +204,7 @@ public class UserController {
      */
     @ApiOperation(value = "권한 디테일 정보 페이지")
     @ResponseBody
-    @GetMapping("/auth")
+    @GetMapping("/oauth2/auth")
     public Authentication auth() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
@@ -191,62 +253,65 @@ public class UserController {
      * 리턴 모든 유저 by JSON
      * @return
      */
-    @ApiOperation(value = "리턴 모든 유저 by JSON")
-    @Secured({"ROLE_USER", "RUN_AS_ADMIN"})
-    @GetMapping("/user/userListByUser")
-    public ResponseEntity userListByUser() {
-        return ResponseEntity.ok(userService.getUsers());
+//    @ApiOperation(value = "리턴 모든 유저 by JSON")
+//    @Secured({"ROLE_USER", "RUN_AS_ADMIN"})
+//    @GetMapping("/user/userListByUser")
+//    public ResponseEntity userListByUser() {
+//        return ResponseEntity.ok(userService.getUsers());
+//    }
+
+
+
+
+
+    /**
+     * 사진 다중 업로드 페이지
+     * @return
+     */
+    @ApiOperation(value = "사진 업로드")
+    @GetMapping("/picture-upload")
+    public ModelAndView pictureUpload() {  // 사진 업로드
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("pictureUpload");
+        return mav;
     }
 
 
     /**
-     * 회원 가입하기
-     * @param user
+     * 사진 다중 업로드
      * @return
      */
-    @ApiOperation(value = "회원 가입하는 POST 매핑 함수")
-    @PostMapping("/user/save")
-    public ModelAndView signup(User user) throws DuplicateMemberException { // 회원 추가
-        ModelAndView mav = new ModelAndView();
-        Long result = userService.save(user);
-        if(result == 0L) {
-            mav.setViewName("signupDuplicateId");
-            mav.addObject("signupError", true);
-        }else {
-            mav.setViewName("index");
+    @RequestMapping(value = "fileupload2")
+    public ModelAndView requestupload2(MultipartHttpServletRequest mRequest) {
+        List<MultipartFile> fileList = mRequest.getFiles("file");
+        String src = mRequest.getParameter("src");
+
+        String path = "C:\\image\\";
+
+        for (MultipartFile mf : fileList) {
+            String originFileName = mf.getOriginalFilename(); // 원본 파일 명
+            long fileSize = mf.getSize(); // 파일 사이즈
+
+            System.out.println("originFileName : " + originFileName);
+            System.out.println("fileSize : " + fileSize);
+
+            String safeFile = path + originFileName;
+            try {
+                mf.transferTo(new File(safeFile));
+            } catch (IllegalStateException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
 
-        return mav;
-    }
-
-    /**
-     * 회원정보 수정하기
-     * @param user
-     * @return
-     */
-    @ApiOperation(value = "회원 정보 수정하는 POST 매핑 함수")
-    @PostMapping("/user/update")
-    public ModelAndView update(User user) {  // 회원 수정
-        userService.updateUser(user);
         ModelAndView mav = new ModelAndView();
-        mav.setViewName("main");
+        mav.setViewName("pictureUpload");
+
         return mav;
     }
-
-    /**
-     * 회원 탈퇴하기
-     * @param user
-     * @return
-     */
-    @ApiOperation(value = "회원 탈퇴하는 POST 매핑 함수")
-    @PostMapping("/user/remove")
-    public ModelAndView remove(User user) {  // 회원 탈퇴
-        userService.removeUser(user);
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("login");
-        return mav;
-    }
-
 
 
 

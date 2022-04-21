@@ -10,12 +10,12 @@
 
 <div class="container center-contents">
     <div class="row">
-        <form class="form-signin" method="post" th:action="@{/user/save}">
+        <form class="form-signin" method="post" th:action="@{/user/create}">
 
             <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> 회원가입 </h1>
 
-            <label for="userid" class="sr-only">아이디</label>
-            <input type="text" id="userid" name="userid" class="form-control" placeholder="아이디" required autofocus>
+            <label for="userId" class="sr-only">아이디</label>
+            <input type="text" id="userId" name="userId" class="form-control" placeholder="아이디" required autofocus>
 
             <label for="password" class="sr-only">비밀번호</label>
             <input type="password" id="password" name="password"  class="form-control" placeholder="비밀번호" required>

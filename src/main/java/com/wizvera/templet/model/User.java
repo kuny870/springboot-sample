@@ -1,6 +1,6 @@
 package com.wizvera.templet.model;
 
-import com.wizvera.templet.model.converter.UserStatusConverter;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
@@ -21,73 +21,69 @@ import java.util.Set;
 @Entity
 @DynamicInsert
 @DynamicUpdate
+@ApiModel(value = "사용자")
 public class User extends TimeEntity implements UserDetails {
 
+    @ApiModelProperty(value = "pk")
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ApiModelProperty(value = "사용자의 아이디", example = "admin", required = true)
-    @Column(name = "user_id", unique = true)
+    @Column(name = "user_id", unique = true, columnDefinition = "VARCHAR(45) NOT NULL")
     private String userId;
 
-    @ApiModelProperty(value = "사용자의 비밀번호", example = "1234")
+    @ApiModelProperty(value = "비밀번호", example = "1234")
     @Column(name = "password")
     private String password;
 
-    @ApiModelProperty(value = "사용자의 이메일", example = "admin@naver.com")
+    @ApiModelProperty(value = "이메일", example = "admin@naver.com")
     @Column(name = "email")
     private String email;
 
-    @ApiModelProperty(value = "사용자의 이름", example = "홍길동")
+    @ApiModelProperty(value = "이름", example = "홍길동")
     @Column(name = "name")
     private String name;
 
-    @ApiModelProperty(value = "사용자의 전화번호", example = "010-1234-1234")
+    @ApiModelProperty(value = "연락처", example = "010-1234-1234")
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @ApiModelProperty(value = "사용자의 권한", example = "ROLE_ADMIN")
-    @Column(name = "auth", columnDefinition = "varchar(255) NOT NULL DEFAULT 'ROLE_USER'")
-    private String auth;
+    @ApiModelProperty(value = "회사명", example = "(주)위즈베라")
+    @Column(name = "company_name")
+    private String companyName;
 
-    @ApiModelProperty(value = "사용자의 계정상태", example = "1")
-    @Column(name = "status", columnDefinition = "int DEFAULT 0")
-    @Convert(converter = UserStatusConverter.class)
-    private UserStatus status;
+    @ApiModelProperty(value = "사업자번호", example = "220-81-62517")
+    @Column(name = "business_no")
+    private String businessNo;
 
-    @ApiModelProperty(value = "사용자의 승인상태", example = "Y")
+    @ApiModelProperty(value = "권한", example = "ROLE_ADMIN")
+    @Column(name = "role", columnDefinition = "varchar(255) NOT NULL DEFAULT 'ROLE_USER'")
+    private String role;
+
+    @ApiModelProperty(value = "승인여부", example = "Y")
     @Column(name = "approval", columnDefinition = "CHAR(1) NOT NULL DEFAULT 'N'")
     private String approval;
 
-    @Column(name = "enabled")
-    private boolean enabled;
-
-//    public static enum State {
-//        NORMAL, // 일반 사용자
-//        EXPIRATION // 계정 만료 사용자
-//    }
-
-    @ApiModelProperty(value = "사용자의 삭제여부", example = "N")
+    @ApiModelProperty(value = "삭제여부", example = "N")
     @Column(name = "del_yn", columnDefinition = "CHAR(1) NOT NULL DEFAULT 'N'")
     private String delYn;
 
 
     @Builder
-    public User(String userId, String email, String password, String name, String phoneNumber, String auth, String delYn, UserStatus status) {
+    public User(String userId, String email, String password, String name, String phoneNumber, String role) {
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
-        if(auth == null) {
-            this.auth = "ROLE_USER";
+        if(role == null) {
+            this.role = "ROLE_USER";
         }else {
-            this.auth = auth;
+            this.role = role;
         }
         this.delYn = "N";
-        this.status = status;
     }
 
     // 사용자의 권한을 콜렉션 형태로 반환
@@ -95,7 +91,7 @@ public class User extends TimeEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> roles = new HashSet<>();
-        for (String role : auth.split(",")) {
+        for (String role : role.split(",")) {
             roles.add(new SimpleGrantedAuthority(role));
         }
         return roles;
@@ -104,7 +100,7 @@ public class User extends TimeEntity implements UserDetails {
     // 사용자의 id를 반환 (unique한 값)
     @Override
     public String getUsername() {
-        return name;
+        return userId;
     }
 
     // 사용자의 password를 반환

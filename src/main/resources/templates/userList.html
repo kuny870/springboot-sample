@@ -19,6 +19,8 @@
                 <th scope="col"> No. </th>
                 <th scope="col"> 아이디 </th>
                 <th scope="col"> 이름 </th>
+                <th scope="col"> 이메일 </th>
+                <th scope="col"> 핸드폰번호 </th>
                 <th scope="col"> 상태 </th>
                 <th scope="col"> 권한 </th>
                 <th scope="col"> 가입날짜 </th>
@@ -34,8 +36,10 @@
             <tr th:each="user : ${page?.content}" th:object="${user}">
 
                 <td th:text="*{id}"> No </td>
-                <td th:text="*{email}"> 아이디 </td>
+                <td th:text="*{userId}"> 아이디 </td>
                 <td th:text="*{name}"> 이름 </td>
+                <td th:text="*{email}"> 이메일 </td>
+                <td th:text="*{phoneNumber}"> 핸드폰번호 </td>
                 <td th:text="*{status.description}"> 상태 </td>
                 <td>
                     <div th:each="auth : *{authorities}" th:object="${auth}">

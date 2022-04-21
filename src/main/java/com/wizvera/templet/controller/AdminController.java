@@ -1,6 +1,8 @@
 package com.wizvera.templet.controller;
 
 import com.wizvera.templet.model.User;
+import com.wizvera.templet.model.response.Message;
+import com.wizvera.templet.model.response.StatusEnum;
 import com.wizvera.templet.repository.UserRepository;
 import com.wizvera.templet.service.UserService;
 import io.swagger.annotations.Api;
@@ -26,7 +28,115 @@ public class AdminController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final UserService userService;
+
     private final UserRepository userRepository;
+
+
+    /**
+     * 회원 전체 불러오기
+     * @return
+     */
+    @ApiOperation(value = "회원 전체 불러오기")
+    @GetMapping("/admin/user/list")
+    public ResponseEntity<Message> getUsers(
+            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum
+            , @RequestParam(value = "size", defaultValue = "10") Integer size) {
+
+        PageRequest pageRequest = PageRequest.of(pageNum-1, size);
+        Page<User> userList = userService.getUserList(pageRequest);
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+        message.setData(userList);
+
+        return ResponseEntity.ok(message);
+    }
+
+    /**
+     * 회원 승인하기
+     * @return
+     */
+    @ApiOperation(value = "회원 승인하기")
+    @PostMapping("/admin/user/approval")
+    public ResponseEntity<Message> userApproval(String id){
+
+        userRepository.updateUserApproval(id);
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+
+        return ResponseEntity.ok(message);
+    }
+
+    /**
+     * 회원 승인 취소하기
+     * @return
+     */
+    @ApiOperation(value = "회원 승인 취소하기")
+    @PostMapping("/admin/user/approvalCancel")
+    public ResponseEntity<Message> userApprovalCancel(String id){
+
+        userRepository.updateUserApprovalCancel(id);
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+
+        return ResponseEntity.ok(message);
+    }
+
+
+    /**
+     * 회원 탈퇴시키기
+     * @return
+     */
+    @ApiOperation(value = "회원 탈퇴 시키기")
+    @PostMapping("/admin/user/delete")
+    public ResponseEntity<Message> userRemove(String id) {
+
+        userRepository.updateUserRemove(id);
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+
+        return ResponseEntity.ok(message);
+    }
+
+    /**
+     * 회원 복구시키기
+     * @return
+     */
+    @ApiOperation(value = "회원 복구 시키기")
+    @PostMapping("/admin/user/restore")
+    public ResponseEntity<Message> userRestore(String id) {
+
+        userRepository.updateUserRestore(id);
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+
+        return ResponseEntity.ok(message);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 관리자 페이지
@@ -41,15 +151,6 @@ public class AdminController {
         return mav;
     }
 
-    /**
-     * 회원 전체 불러오기 By Json
-     * @return
-     */
-    @ApiOperation(value = "회원 전체 불러오기 By Json")
-    @GetMapping("/admin/users")
-    public ResponseEntity getUsers() {
-        return ResponseEntity.ok(userService.getUsers());
-    }
 
     /**
      * 회원 전체 불러오기 By View
@@ -66,80 +167,6 @@ public class AdminController {
         mav.addObject("page", userList);
         mav.setViewName("userList");
         return mav;
-    }
-
-
-    /**
-     * 회원 승인하기
-     * @return
-     */
-    @ApiOperation(value = "회원 승인하기")
-    @GetMapping("/admin/userApproval")
-    public ResponseEntity<?> userApproval(
-            @RequestParam("id") String id){
-
-        boolean result = false;
-
-        userRepository.updateUserApproval(id);
-
-        result = true;
-
-        return ResponseEntity.ok(result);
-    }
-
-    /**
-     * 회원 승인 취소하기
-     * @return
-     */
-    @ApiOperation(value = "회원 승인 취소하기")
-    @GetMapping("/admin/userApprovalCancel")
-    public ResponseEntity<?> userApprovalCancel(
-            @RequestParam("id") String id){
-
-        boolean result = false;
-
-        userRepository.updateUserApprovalCancel(id);
-
-        result = true;
-
-        return ResponseEntity.ok(result);
-    }
-
-
-    /**
-     * 회원 탈퇴시키기
-     * @return
-     */
-    @ApiOperation(value = "회원 탈퇴 시키기")
-    @GetMapping("/admin/userRemove")
-    public ResponseEntity<?> userRemove(
-            @RequestParam("id") String id) {
-
-        boolean result = false;
-
-        userRepository.updateUserRemove(id);
-
-        result = true;
-
-        return ResponseEntity.ok(result);
-    }
-
-    /**
-     * 회원 복구시키기
-     * @return
-     */
-    @ApiOperation(value = "회원 복구 시키기")
-    @GetMapping("/admin/userRestore")
-    public ResponseEntity<?> userRestore(
-            @RequestParam("id") String id) {
-
-        boolean result = false;
-
-        userRepository.updateUserRestore(id);
-
-        result = true;
-
-        return ResponseEntity.ok(result);
     }
 
 }

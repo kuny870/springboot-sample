@@ -79,7 +79,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests(request-> {
                     request
                             .antMatchers("/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**").permitAll()
-                            .antMatchers("/", "/signup", "/user/save", "/auth", "/greeting/**").permitAll() // 모든 허용 url
+                            .antMatchers("/", "/signup", "/user/create", "/auth", "/greeting/**").permitAll() // 모든 허용 url
+                            .antMatchers("/**").permitAll() // 모든 허용 url
                             .antMatchers("/admin/**").hasRole("ADMIN")
                             .antMatchers("/user/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
                             .mvcMatchers("/greeting/{name}").access("@nameCheck.check(#name)")
