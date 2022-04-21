@@ -231,4 +231,25 @@ public class DetectController {
     }
 
 
+
+
+
+    /**
+     * 사진 다중 업로드
+     * @return
+     */
+    @RequestMapping(value = "fileupload2")
+    public ResponseEntity<Message> detectedProductRegist2(
+            DetectedProduct detectedProduct) {
+
+        detectedProductService.regist(detectedProduct);
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+
+        return ResponseEntity.ok(message);
+    }
+
+
 }

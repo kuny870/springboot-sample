@@ -1,5 +1,6 @@
 package com.wizvera.templet.controller;
 
+import com.wizvera.templet.model.DetectedProduct;
 import com.wizvera.templet.model.User;
 import com.wizvera.templet.model.response.Message;
 import com.wizvera.templet.model.response.StatusEnum;
@@ -75,6 +76,7 @@ public class UserController {
 
         return ResponseEntity.ok(message);
     }
+
 
     /**
      * 회원정보 수정하기
@@ -198,6 +200,19 @@ public class UserController {
         return mav;
     }
 
+    @PostMapping("/user/create2")
+    public ModelAndView signup(User user, ModelAndView mav) throws DuplicateMemberException { // 회원 추가
+
+        userService.save(user);
+
+//        Message message = new Message();
+//        message.setStatus(StatusEnum.OK);
+//        message.setMessage("성공 코드");
+
+        mav.setViewName("index");
+        return mav;
+    }
+
     /**
      * 권한 디테일 정보 페이지
      * @return
@@ -273,43 +288,6 @@ public class UserController {
     public ModelAndView pictureUpload() {  // 사진 업로드
         ModelAndView mav = new ModelAndView();
         mav.setViewName("pictureUpload");
-        return mav;
-    }
-
-
-    /**
-     * 사진 다중 업로드
-     * @return
-     */
-    @RequestMapping(value = "fileupload2")
-    public ModelAndView requestupload2(MultipartHttpServletRequest mRequest) {
-        List<MultipartFile> fileList = mRequest.getFiles("file");
-        String src = mRequest.getParameter("src");
-
-        String path = "C:\\image\\";
-
-        for (MultipartFile mf : fileList) {
-            String originFileName = mf.getOriginalFilename(); // 원본 파일 명
-            long fileSize = mf.getSize(); // 파일 사이즈
-
-            System.out.println("originFileName : " + originFileName);
-            System.out.println("fileSize : " + fileSize);
-
-            String safeFile = path + originFileName;
-            try {
-                mf.transferTo(new File(safeFile));
-            } catch (IllegalStateException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("pictureUpload");
-
         return mav;
     }
 
