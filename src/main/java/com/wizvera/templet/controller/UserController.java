@@ -1,6 +1,5 @@
 package com.wizvera.templet.controller;
 
-import com.wizvera.templet.model.DetectedProduct;
 import com.wizvera.templet.model.User;
 import com.wizvera.templet.model.response.Message;
 import com.wizvera.templet.model.response.StatusEnum;
@@ -12,20 +11,14 @@ import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 @Api(tags = {"유저 관련한 정보를 제공하는 Controller"})
@@ -284,10 +277,10 @@ public class UserController {
      * @return
      */
     @ApiOperation(value = "사진 업로드")
-    @GetMapping("/picture-upload")
-    public ModelAndView pictureUpload() {  // 사진 업로드
+    @GetMapping("/detecting-upload")
+    public ModelAndView detectingUpload() {  // 사진 업로드
         ModelAndView mav = new ModelAndView();
-        mav.setViewName("pictureUpload");
+        mav.setViewName("detectingUpload");
         return mav;
     }
 

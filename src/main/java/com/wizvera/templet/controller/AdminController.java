@@ -169,4 +169,79 @@ public class AdminController {
         return mav;
     }
 
+
+
+    /**
+     * 회원 승인하기
+     * @return
+     */
+    @ApiOperation(value = "회원 승인하기")
+    @GetMapping("/admin/userApproval")
+    public ResponseEntity<?> userApproval2(
+            @RequestParam("id") String id){
+
+        boolean result = false;
+
+        userRepository.updateUserApproval(id);
+
+        result = true;
+
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 회원 승인 취소하기
+     * @return
+     */
+    @ApiOperation(value = "회원 승인 취소하기")
+    @GetMapping("/admin/userApprovalCancel")
+    public ResponseEntity<?> userApprovalCancel2(
+            @RequestParam("id") String id){
+
+        boolean result = false;
+
+        userRepository.updateUserApprovalCancel(id);
+
+        result = true;
+
+        return ResponseEntity.ok(result);
+    }
+
+
+    /**
+     * 회원 탈퇴시키기
+     * @return
+     */
+    @ApiOperation(value = "회원 탈퇴 시키기")
+    @GetMapping("/admin/userRemove")
+    public ResponseEntity<?> userRemove2(
+            @RequestParam("id") String id) {
+
+        boolean result = false;
+
+        userRepository.updateUserRemove(id);
+
+        result = true;
+
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 회원 복구시키기
+     * @return
+     */
+    @ApiOperation(value = "회원 복구 시키기")
+    @GetMapping("/admin/userRestore")
+    public ResponseEntity<?> userRestore2(
+            @RequestParam("id") String id) {
+
+        boolean result = false;
+
+        userRepository.updateUserRestore(id);
+
+        result = true;
+
+        return ResponseEntity.ok(result);
+    }
+
 }

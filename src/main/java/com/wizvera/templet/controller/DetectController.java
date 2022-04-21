@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -83,7 +84,6 @@ public class DetectController {
 
     /**
      * 가품탐지할 제품 등록하기
-     * @param file
      * @param detectingProduct
      * @return
      * @throws IOException
@@ -235,14 +235,66 @@ public class DetectController {
 
 
     /**
-     * 사진 다중 업로드
+     * 가품탐지 제품 등록
      * @return
      */
     @RequestMapping(value = "fileupload2")
-    public ResponseEntity<Message> detectedProductRegist2(
-            DetectedProduct detectedProduct) {
+    public ModelAndView detectedProductRegist2(
+            DetectingProduct detectingProduct
+            , ModelAndView mav) throws IOException {
 
-        detectedProductService.regist(detectedProduct);
+        detectingProductService.regist(detectingProduct);
+
+        mav.setViewName("UserPage");
+        return mav;
+    }
+
+
+    /**
+     * 가품탐지 제품 목록
+     * @return
+     */
+    @RequestMapping(value = "detecting-list")
+    public ModelAndView detectingList(
+            ModelAndView mav
+            , @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum
+            , @RequestParam(value = "size", defaultValue = "10") Integer size) {
+
+        PageRequest pageRequest = PageRequest.of(pageNum-1, size);
+        Page<DetectingProduct> detectingProductList = detectingProductService.getDetectingProductList(pageRequest);
+
+        mav.addObject("page", detectingProductList);
+        mav.setViewName("detectingList");
+        return mav;
+    }
+
+
+    /**
+     * 제품 삭제 시키기
+     * @return
+     */
+    @ApiOperation(value = "제품 삭제 시키기")
+    @GetMapping("/detecting/remove")
+    public ResponseEntity<Message> detectingRemove(String id) {
+
+        detectingProductRepository.updateDetectingRemove(id);
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+
+        return ResponseEntity.ok(message);
+    }
+
+    /**
+     * 제품 복구 시키기
+     * @return
+     */
+    @ApiOperation(value = "제품 복구 시키기")
+    @GetMapping("/detecting/restore")
+    public ResponseEntity<Message> detectingRestore(String id) {
+
+        detectingProductRepository.updateDetectingRestore(id);
 
         Message message = new Message();
         message.setStatus(StatusEnum.OK);
