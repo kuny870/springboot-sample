@@ -35,5 +35,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "update user set del_yn = 'N' where id = :id", nativeQuery = true)
     void updateUserRestore(@Param("id") String id);
 
-
+    Optional<User> findById(String id);
 }

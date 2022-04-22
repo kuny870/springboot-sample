@@ -18,7 +18,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Optional;
 
 @Api(tags = {"유저 관련한 정보를 제공하는 Controller"})
@@ -247,58 +249,45 @@ public class UserController {
      * @return
      */
     @ApiOperation(value = "유저 페이지")
-//    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @GetMapping("/user-page")
     public ModelAndView userPage(ModelAndView mav) {
-//        if(true){
-//            throw new YouCannotAccessUserPage();
-//        }
         mav.setViewName("UserPage");
         return mav;
     }
 
     /**
-     * 리턴 모든 유저 by JSON
+     * 프로필 페이지
+     * @param mav
      * @return
      */
-//    @ApiOperation(value = "리턴 모든 유저 by JSON")
-//    @Secured({"ROLE_USER", "RUN_AS_ADMIN"})
-//    @GetMapping("/user/userListByUser")
-//    public ResponseEntity userListByUser() {
-//        return ResponseEntity.ok(userService.getUsers());
-//    }
-
-
-
-
-
-    /**
-     * 사진 다중 업로드 페이지
-     * @return
-     */
-    @ApiOperation(value = "사진 업로드")
-    @GetMapping("/detecting-upload")
-    public ModelAndView detectingUpload() {  // 사진 업로드
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("detectingUpload");
+    @ApiOperation(value = "프로필 페이지")
+    @GetMapping("/profile")
+    public ModelAndView profile(ModelAndView mav, Authentication authentication) {
+        Optional<User> optionalUser = userRepository.findByUserId(authentication.getName());
+        User user = optionalUser.get();
+        mav.addObject("user", user);
+        mav.setViewName("profile");
         return mav;
     }
 
-
-
     /**
-     * entityManager를 사용하여 직접 sql문 날리기 예제
-     * @param username
+     * 회원정보 수정하기
+     * @param user
      * @return
      */
-//    @Transactional
-//    @GetMapping("/searchUserName")
-//    public String searchParamUser(@RequestParam(value = "username") String username) {
-//        String sql = "SELECT u FROM UserInfo u WHERE u.username = :username";
-//        List resultList = entityManager.createQuery(sql)
-//                .setParameter("username", username)
-//                .getResultList();
-//        return resultList.toString();
-//    }
+    @ApiOperation(value = "회원 정보 수정하는 POST 매핑 함수")
+    @PostMapping("/user/update2")
+    public ResponseEntity<Message> update2(User user, HttpServletResponse response) throws IOException {  // 회원 수정
+
+        userService.updateUser(user);
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+
+        response.sendRedirect("/");
+        return ResponseEntity.ok(message);
+    }
+
 
 }

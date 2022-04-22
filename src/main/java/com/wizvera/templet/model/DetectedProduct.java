@@ -30,6 +30,10 @@ public class DetectedProduct extends TimeEntity {
     @Column(name = "detecting_product_id")
     private Long detectingProductId;
 
+    @ApiModelProperty(value = "가품탐지할 제품명")
+    @Column
+    private String productName;
+
     @ApiModelProperty(value = "페이지 아이디")
     @Column(name = "page_id")
     private String pageId;

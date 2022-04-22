@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head th:replace="fragments/header :: headFragment"></head>
+<head>
+    <title class="center"> 가품탐지된 제품 목록  </title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body class="detecting-product-list-form">
+<div>
+    <a class="btn btn-lg btn-secondary btn-block2" th:href="@{'/user-page'}"> 유저 페이지 </a>
+    <main role="main">
+        <div class="title-bar">
+            <h4> 가품탐지된 제품 목록 </h4>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col"> No. </th>
+                <th scope="col"> 제품명 </th>
+                <th scope="col"> 판매 사이트 </th>
+                <th scope="col"> 판매자 이름 </th>
+                <th scope="col"> 판매가격 </th>
+                <th scope="col"> 가품 퍼센트 </th>
+                <th scope="col"> 등록날짜 </th>
+                <th scope="col"> 수정날짜 </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="detectedProduct : ${page?.content}" th:object="${detectedProduct}">
+
+                <td th:text="*{id}"> No </td>
+                <td>
+                    <a th:href="@{/detected/product/detail2(id=*{id})}" th:text="*{productName}"/>
+                </td>
+                <td th:text="*{pageSite}"> 판매 사이트 </td>
+                <td th:text="*{seller}"> 셀러 </td>
+                <td th:text="*{price}"> 판매가격 </td>
+                <td th:text="*{imitationPercentage}"> 가품 퍼센트 </td>
+                <td th:text="*{createdDate}"> 등록날짜 </td>
+                <td th:text="*{modifiedDate}"> 수정날짜 </td>
+
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:replace="fragments/paging :: paging(path='/detectedList', paging=${page})" />
+
+    </main>
+
+</div>
+</body>
+
+</html>

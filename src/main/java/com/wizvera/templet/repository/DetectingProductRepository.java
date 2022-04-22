@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 public interface DetectingProductRepository extends JpaRepository<DetectingProduct, Long> {
 
@@ -20,7 +21,5 @@ public interface DetectingProductRepository extends JpaRepository<DetectingProdu
     @Query(value = "update detecting_product set del_yn = 'N' where id = :id", nativeQuery = true)
     void updateDetectingRestore(@Param("id") String id);
 
-
-
-
+    Optional<DetectingProduct> findAllById(Long id);
 }

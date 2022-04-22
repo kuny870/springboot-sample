@@ -4,7 +4,13 @@
 }
 .userList-form {
   margin: auto;
-  max-width: 1345px;
+  max-width: 1490px;
+  text-align: center;
+}
+
+.detecting-product-list-form {
+  margin: auto;
+  max-width: 900px;
   text-align: center;
 }
 

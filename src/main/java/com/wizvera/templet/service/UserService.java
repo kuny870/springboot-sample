@@ -125,6 +125,7 @@ public class UserService implements UserDetailsService {
         getUser.setPassword(user.getPassword());
         getUser.setName(user.getName());
         getUser.setEmail(user.getEmail());
+        getUser.setPhoneNumber(user.getPhoneNumber());
 
         return userRepository.save(getUser);
     }

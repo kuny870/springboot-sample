@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head th:replace="fragments/header :: headFragment"></head>
+<head>
+    <title class="center"> 가품탐지 제품 상세  </title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body class="userList-form">
+
+<div class="container center-contents">
+    <div class="row">
+        <form class="form-signin" id="update" method="post" action="/detecting/product/update2" enctype="multipart/form-data">
+
+            <input type="hidden" id="id" name="id" class="form-control" placeholder="pk" th:value="*{dp.id}">
+            <input type="hidden" id="regUser" name="regUser" class="form-control" placeholder="regUser" th:value="*{dp.regUser}">
+            <input type="hidden" id="delYn" name="delYn" class="form-control" placeholder="delYn" th:value="*{dp.delYn}">
+
+            <input type="text" id="productName" name="productName" class="form-control" placeholder="제품명" th:value="*{dp.productName}" required autofocus>
+
+            <input type="text" id="searchSite" name="searchSite"  class="form-control" placeholder="검색 사이트" th:value="*{dp.searchSite}" required>
+
+            <div th:each="dsk : ${dp.dskList}">
+                <input type="text" name="searchKeyword" class="form-control" placeholder="검색 키워드" th:value="*{dsk.searchKeyword}">
+            </div>
+
+            <div th:each="dpi : ${dp.dpiList}">
+                <img th:src="'data:image/jpeg;base64,'+${dpi.productImageString}" width="120">
+            </div>
+
+            <input multiple="multiple"  type="file" name="file" required="required">
+            <br>
+            <br>
+
+            <button class="btn btn-lg btn-primary btn-block" type="submit"> 수정하기 </button>
+            <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/detecting-list'}"> 가품탐지 제품 목록 </a>
+        </form>
+    </div>
+</div>
+
+</body>
+
+<script>
+
+    var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
+
+    function update() {
+
+        var params = $("#update").serialize();
+
+        var url = contextPath + '/detecting/product/update2';
+
+        $.ajax({
+            url : url
+            , async: true
+            , type : 'POST'
+            , contextType: 'application/x-www-form-urlencoded; charset=UTF-8'
+            , data: params
+            , dataType: 'json'
+            , success: function(result) {
+                if(result) {
+                    location.href("/detecting-list");
+                }else {
+                    alert("알 수 없는 에러입니다.");
+                }
+
+            }
+        });
+
+    }
+
+</script>
+
+</html>

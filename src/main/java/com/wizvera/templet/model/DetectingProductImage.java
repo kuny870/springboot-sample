@@ -38,4 +38,7 @@ public class DetectingProductImage {
     @Column(name = "product_image", columnDefinition = "LONGBLOB")
     private byte[] productImage;
 
+    @Transient
+    private String productImageString;
+
 }

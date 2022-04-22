@@ -1,5 +1,6 @@
 package com.wizvera.templet.config;
 
+import com.wizvera.templet.config.OAuth2.LoginSuccessHandler;
 import com.wizvera.templet.config.OAuth2.SpOAuth2SuccessHandler;
 import com.wizvera.templet.service.UserService;
 import org.slf4j.Logger;
@@ -54,6 +55,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private SpOAuth2SuccessHandler successHandler;
 
+    @Autowired
+    private LoginSuccessHandler loginSuccessHandler;
+
     public SecurityConfig(UserService userService, CustomAuthDetails customAuthDetails, DataSource dataSource) {
         this.userService = userService;
         this.customAuthDetails = customAuthDetails;
@@ -95,6 +99,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                 .defaultSuccessUrl("/", false)  // 로그인 성공 시 이동 페이지  / alwaysUse 옵션 true : 페이지 url 접근 시도 후 로그인 시 해당 페이지 유지
                                 .failureUrl("/login-error")             // 로그인 실패 시 이동 페이지
                                 .authenticationDetailsSource(customAuthDetails)     // 권한 상세 정보 보기
+                                .successHandler(loginSuccessHandler)
                         )
                         .oauth2Login(oauth2->oauth2                 // OAuth2 로그인 (google, naver 로그인)
                                 .successHandler(successHandler)
