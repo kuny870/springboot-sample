@@ -1,15 +1,11 @@
 package com.wizvera.templet.config.OAuth2;
 
-import com.wizvera.templet.exception.YouCannotLogin;
 import com.wizvera.templet.model.User;
 import com.wizvera.templet.repository.UserRepository;
-import com.wizvera.templet.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
