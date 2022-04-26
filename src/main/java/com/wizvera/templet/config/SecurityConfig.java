@@ -3,6 +3,7 @@ package com.wizvera.templet.config;
 import com.wizvera.templet.config.OAuth2.LoginSuccessHandler;
 import com.wizvera.templet.config.OAuth2.SpOAuth2SuccessHandler;
 import com.wizvera.templet.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +42,8 @@ import java.util.Collection;
 @Configuration
 @EnableWebSecurity(debug = true)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Slf4j
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter;
 
     private final UserService userService;
     private UserDetailsService userDetailsService;
@@ -88,7 +86,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             .antMatchers("/admin/**").hasRole("ADMIN")
                             .antMatchers("/user/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
                             .mvcMatchers("/greeting/{name}").access("@nameCheck.check(#name)")
-//                            .mvcMatchers("/user-page").hasRole("ADMIN")
+//                            .mvcMatchers("/user/page").hasRole("ADMIN")
                             .anyRequest().authenticated()       // 권한이 있어야 허용
 //                            .accessDecisionManager(filAccessDecisionManager())    // accessDecisionManager : 권한 위원회
                             ;

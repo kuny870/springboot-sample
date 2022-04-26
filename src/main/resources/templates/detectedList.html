@@ -8,7 +8,7 @@
 </head>
 <body class="detecting-product-list-form">
 <div>
-    <a class="btn btn-lg btn-secondary btn-block2" th:href="@{'/user-page'}"> 유저 페이지 </a>
+    <a class="btn btn-lg btn-secondary btn-block2" th:href="@{'/user/page'}"> 유저 페이지 </a>
     <main role="main">
         <div class="title-bar">
             <h4> 가품탐지된 제품 목록 </h4>
@@ -31,7 +31,7 @@
 
                 <td th:text="*{id}"> No </td>
                 <td>
-                    <a th:href="@{/detected/product/detail2(id=*{id})}" th:text="*{productName}"/>
+                    <a th:href="@{/detected/product/detail(id=*{id})}" th:text="*{productName}"/>
                 </td>
                 <td th:text="*{pageSite}"> 판매 사이트 </td>
                 <td th:text="*{seller}"> 셀러 </td>

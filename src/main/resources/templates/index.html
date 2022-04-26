@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>가품탐지 HOME</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
     <link rel="stylesheet" th:href="@{/css/index.css}">
     <link rel="stylesheet" th:href="@{/css/general.css}">
@@ -29,13 +29,13 @@
             <a href="/signup">  회원가입 </a>
         </div>
         <div class="link" sec:authorize="authenticated">
-            <a href="/profile">  내 정보  </a>
+            <a href="/user/profile">  내 정보  </a>
         </div>
         <div class="link" sec:authorize="authenticated">
-            <a href="/user-page">  유저 페이지  </a>
+            <a href="/user/page">  유저 페이지  </a>
         </div>
         <div class="link" sec:authorize="authenticated">
-            <a href="/admin-page">  관리자 페이지 </a>
+            <a href="/admin/page">  관리자 페이지 </a>
         </div>
         <div class="link" sec:authorize="authenticated">
             <form th:action="@{/logout}" method="post">

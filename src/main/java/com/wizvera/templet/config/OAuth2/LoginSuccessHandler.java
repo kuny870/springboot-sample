@@ -1,5 +1,6 @@
 package com.wizvera.templet.config.OAuth2;
 
+import com.wizvera.templet.exception.YouCannotLogin;
 import com.wizvera.templet.model.User;
 import com.wizvera.templet.repository.UserRepository;
 import com.wizvera.templet.service.UserService;
@@ -35,7 +36,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         HttpSession session = request.getSession(true);
         session.setAttribute("id", user.get().getId());
 
-        response.sendRedirect("/");
+        if(user.get().getDelYn().equals("Y")) {
+            session.invalidate();
+            response.sendRedirect("/login-error");
+        }else {
+            response.sendRedirect("/");
+        }
+
     }
 
 }

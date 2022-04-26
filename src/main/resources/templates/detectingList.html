@@ -8,7 +8,7 @@
 </head>
 <body class="detecting-product-list-form">
 <div>
-    <a class="btn btn-lg btn-secondary btn-block2" th:href="@{'/user-page'}"> 유저 페이지 </a>
+    <a class="btn btn-lg btn-secondary btn-block2" th:href="@{'/user/page'}"> 유저 페이지 </a>
     <main role="main">
         <div class="title-bar">
             <h4> 가품탐지 제품 목록 </h4>
@@ -31,7 +31,7 @@
                 <td th:text="*{id}"> No </td>
                 <td th:text="*{searchSite}"> 검색 사이트 </td>
                 <td>
-                    <a th:href="@{/detecting/product/detail2(id=*{id})}" th:text="*{productName}"/>
+                    <a th:href="@{/detecting/product/detail(id=*{id})}" th:text="*{productName}"/>
                 </td>
                 <td th:text="*{createdDate}"> 가입날짜 </td>
                 <td th:text="*{modifiedDate}"> 수정날짜 </td>
@@ -68,7 +68,7 @@
 
     function detecting(id) {
 
-        var url = contextPath + '/detected/product/regist2';
+        var url = contextPath + '/detected/product/regist';
 
         $.ajax({
             url : url
@@ -94,7 +94,7 @@
 
     function remove(id) {
 
-        var url = contextPath + '/detecting/remove';
+        var url = contextPath + '/detecting/product/delete';
 
         $.ajax({
             url : url
@@ -118,7 +118,7 @@
 
     function restore(id) {
 
-        var url = contextPath + '/detecting/restore';
+        var url = contextPath + '/detecting/product/restore';
 
         $.ajax({
             url : url

@@ -1,5 +1,6 @@
 package com.wizvera.templet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -62,6 +63,15 @@ public class User extends TimeEntity implements UserDetails {
     @Column(name = "role", columnDefinition = "varchar(255) NOT NULL DEFAULT 'ROLE_USER'")
     private String role;
 
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "USER_GROUP_ID")
+//    @JsonIgnore
+//    private UserGroup userGroup;
+
+//    @JsonIgnore
+//    @Column(name = "TOKEN", length = 64, nullable = true)
+//    private String token;
+
     @ApiModelProperty(value = "승인여부", example = "Y")
     @Column(name = "approval", columnDefinition = "CHAR(1) NOT NULL DEFAULT 'N'")
     private String approval;
@@ -96,6 +106,14 @@ public class User extends TimeEntity implements UserDetails {
         }
         return roles;
     }
+
+//    @Override
+//    @JsonIgnore
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        Set<GrantedAuthority> roles = new HashSet<>();
+//        roles.add(new SimpleGrantedAuthority(adminGroup.getAccessRole()));
+//        return roles;
+//    }
 
     // 사용자의 id를 반환 (unique한 값)
     @Override

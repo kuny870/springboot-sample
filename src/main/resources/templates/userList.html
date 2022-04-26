@@ -8,7 +8,7 @@
 </head>
 <body class="userList-form">
 <div>
-    <a class="btn btn-lg btn-secondary btn-block2" th:href="@{'/admin-page'}"> 관리자 페이지 </a>
+    <a class="btn btn-lg btn-secondary btn-block2" th:href="@{'/admin/page'}"> 관리자 페이지 </a>
     <main role="main">
         <div class="title-bar">
             <h4> 회원 목록 </h4>
@@ -67,7 +67,7 @@
             </tbody>
         </table>
 
-        <div th:replace="fragments/paging :: paging(path='/admin/userList', paging=${page})" />
+        <div th:replace="fragments/paging :: paging(path='/admin/user/list', paging=${page})" />
 
     </main>
 
@@ -80,7 +80,7 @@
 
     function approval(id) {
 
-        var url = contextPath + '/admin/userApproval';
+        var url = contextPath + '/admin/user/approval';
 
         $.ajax({
             url : url
@@ -103,7 +103,7 @@
 
     function approvalCancel(id) {
 
-        var url = contextPath + '/admin/userApprovalCancel';
+        var url = contextPath + '/admin/user/approval/cancel';
 
         $.ajax({
             url : url
@@ -127,7 +127,7 @@
 
     function remove(id) {
 
-        var url = contextPath + '/admin/userRemove';
+        var url = contextPath + '/admin/user/delete';
 
         $.ajax({
             url : url
@@ -151,7 +151,7 @@
 
     function restore(id) {
 
-        var url = contextPath + '/admin/userRestore';
+        var url = contextPath + '/admin/user/restore';
 
         $.ajax({
             url : url

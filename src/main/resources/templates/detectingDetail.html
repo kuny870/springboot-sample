@@ -10,7 +10,7 @@
 
 <div class="container center-contents">
     <div class="row">
-        <form class="form-signin" id="update" method="post" action="/detecting/product/update2" enctype="multipart/form-data">
+        <form class="form-signin" id="update" method="post" action="/detecting/product/update" enctype="multipart/form-data">
 
             <input type="hidden" id="id" name="id" class="form-control" placeholder="pk" th:value="*{dp.id}">
             <input type="hidden" id="regUser" name="regUser" class="form-control" placeholder="regUser" th:value="*{dp.regUser}">
@@ -33,7 +33,7 @@
             <br>
 
             <button class="btn btn-lg btn-primary btn-block" type="submit"> 수정하기 </button>
-            <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/detecting-list'}"> 가품탐지 제품 목록 </a>
+            <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/detecting/product/list'}"> 가품탐지 제품 목록 </a>
         </form>
     </div>
 </div>
@@ -48,7 +48,7 @@
 
         var params = $("#update").serialize();
 
-        var url = contextPath + '/detecting/product/update2';
+        var url = contextPath + '/detecting/product/update';
 
         $.ajax({
             url : url
@@ -59,7 +59,7 @@
             , dataType: 'json'
             , success: function(result) {
                 if(result) {
-                    location.href("/detecting-list");
+                    location.href("/detecting/product/list");
                 }else {
                     alert("알 수 없는 에러입니다.");
                 }

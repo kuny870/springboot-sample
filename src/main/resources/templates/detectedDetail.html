@@ -10,7 +10,7 @@
 
 <div class="container center-contents">
     <div class="row">
-        <form class="form-signin2" id="update" method="post" action="/detecting/product/update2" enctype="multipart/form-data">
+        <form class="form-signin2" id="update" method="post" action="/detecting/product/update" enctype="multipart/form-data">
 
             <input type="text" id="productName" name="productName" class="form-control" placeholder="제품명" th:value="*{dp.productName}" readonly>
 
@@ -40,7 +40,7 @@
 
             <br>
 
-            <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/detected/product/list2'}"> 가품탐지된 제품 목록 </a>
+            <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/detected/product/list'}"> 가품탐지된 제품 목록 </a>
         </form>
     </div>
 </div>

@@ -8,11 +8,8 @@ import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,11 +25,8 @@ import java.util.Optional;
 @Transactional
 public class UserService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private SpOAuth2UserRepository oAuth2UserRepository;
-
+    private final UserRepository userRepository;
+    private final SpOAuth2UserRepository oAuth2UserRepository;
 
     /**
      * 사용자 전체 불러오기
@@ -51,7 +45,9 @@ public class UserService implements UserDetailsService {
      * @return
      */
     public Page<User> getUserList(PageRequest pageRequest) {
-        return userRepository.findAll(pageRequest);
+        List<User> userList = userRepository.findByRoleUser(pageRequest.getPageNumber(), pageRequest.getPageSize());
+        Page<User> pages = new PageImpl<User>(userList, pageRequest, userList.size());
+        return pages;
     }
 
     /**
