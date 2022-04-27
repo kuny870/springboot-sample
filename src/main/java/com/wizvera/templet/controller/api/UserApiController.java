@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Optional;
 
-@Api(tags = { "101. 유저 관련 정보"})
+@Api(tags = { "100. 유저 관련 정보"})
 @RequiredArgsConstructor
 @RestController
 @Slf4j

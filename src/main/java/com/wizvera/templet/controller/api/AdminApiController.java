@@ -20,7 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-@Api(tags = { "102. 관리자 관련 정보" })
+@Api(tags = { "101. 관리자 관련 정보" })
 @RequiredArgsConstructor
 @RestController
 @Slf4j

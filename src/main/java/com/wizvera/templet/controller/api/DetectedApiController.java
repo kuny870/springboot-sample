@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Optional;
 
-@Api(tags = { "201. 가품 탐지 된 제품 정보" })
+@Api(tags = { "201. 가품탐지 된 제품 정보" })
 @RequiredArgsConstructor
 @RestController
 @Slf4j
