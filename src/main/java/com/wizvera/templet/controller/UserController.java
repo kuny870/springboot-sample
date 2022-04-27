@@ -156,8 +156,7 @@ public class UserController {
      */
     @PostMapping("/user/create")
     public ModelAndView signup(User user, ModelAndView mav) throws DuplicateMemberException { // 회원 추가
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        user.setPassword(encoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         Optional<User> optionalUser = userRepository.findByUserId(user.getUserId());
 
@@ -168,7 +167,7 @@ public class UserController {
         userRepository.save(User.builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
-                .password(passwordEncoder.encode(user.getPassword()))
+                .password(user.getPassword())
                 .name(user.getName())
                 .phoneNumber(user.getPhoneNumber())
                 .roles(user.getRoles())
@@ -241,7 +240,7 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public User login(User user, HttpServletResponse response) {
+    public ModelAndView login(User user, HttpServletResponse response, ModelAndView mav) {
         User member = userRepository.findByUserId(user.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 ID 입니다."));
         if (!passwordEncoder.matches(user.getPassword(), member.getPassword())) {
@@ -257,7 +256,9 @@ public class UserController {
         cookie.setSecure(true);
         response.addCookie(cookie);
 
-        return new User(member);
+        mav.setViewName("index");
+
+        return mav;
     }
 
     @PostMapping("/logout")
