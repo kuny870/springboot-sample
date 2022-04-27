@@ -1,6 +1,5 @@
 package com.wizvera.templet.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -13,9 +12,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Data
@@ -59,18 +57,21 @@ public class User extends TimeEntity implements UserDetails {
     @Column(name = "business_no")
     private String businessNo;
 
-    @ApiModelProperty(value = "권한", example = "ROLE_ADMIN")
-    @Column(name = "role", columnDefinition = "varchar(255) NOT NULL DEFAULT 'ROLE_USER'")
-    private String role;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles = new ArrayList<>();
 
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "USER_GROUP_ID")
-//    @JsonIgnore
-//    private UserGroup userGroup;
+    public User(User details) {
+        super();
+    }
 
-//    @JsonIgnore
-//    @Column(name = "TOKEN", length = 64, nullable = true)
-//    private String token;
+    // 사용자의 권한을 콜렉션 형태로 반환
+    // 단, 클래스 자료형은 GrantedAuthority를 구현해야함
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
 
     @ApiModelProperty(value = "승인여부", example = "Y")
     @Column(name = "approval", columnDefinition = "CHAR(1) NOT NULL DEFAULT 'N'")
@@ -82,38 +83,15 @@ public class User extends TimeEntity implements UserDetails {
 
 
     @Builder
-    public User(String userId, String email, String password, String name, String phoneNumber, String role) {
+    public User(String userId, String email, String password, String name, String phoneNumber, List<String> roles) {
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
-        if(role == null) {
-            this.role = "ROLE_USER";
-        }else {
-            this.role = role;
-        }
         this.delYn = "N";
+        this.roles = roles;
     }
-
-    // 사용자의 권한을 콜렉션 형태로 반환
-    // 단, 클래스 자료형은 GrantedAuthority를 구현해야함
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> roles = new HashSet<>();
-        for (String role : role.split(",")) {
-            roles.add(new SimpleGrantedAuthority(role));
-        }
-        return roles;
-    }
-
-//    @Override
-//    @JsonIgnore
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        Set<GrantedAuthority> roles = new HashSet<>();
-//        roles.add(new SimpleGrantedAuthority(adminGroup.getAccessRole()));
-//        return roles;
-//    }
 
     // 사용자의 id를 반환 (unique한 값)
     @Override

@@ -1,5 +1,6 @@
 package com.wizvera.templet.controller;
 
+import com.wizvera.templet.config.JWT.JwtTokenProvider;
 import com.wizvera.templet.model.User;
 import com.wizvera.templet.model.response.Message;
 import com.wizvera.templet.model.response.StatusEnum;
@@ -8,16 +9,21 @@ import com.wizvera.templet.service.UserService;
 import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -26,8 +32,14 @@ import java.util.Optional;
 @RequestMapping
 public class UserController {
 
-    private final UserService userService;
-    private final UserRepository userRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     /**
      * 메인 페이지
@@ -144,10 +156,38 @@ public class UserController {
      */
     @PostMapping("/user/create")
     public ModelAndView signup(User user, ModelAndView mav) throws DuplicateMemberException { // 회원 추가
-        userService.save(user);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        user.setPassword(encoder.encode(user.getPassword()));
+
+        Optional<User> optionalUser = userRepository.findByUserId(user.getUserId());
+
+        if(optionalUser.isPresent()){
+            return mav;
+        }
+
+        userRepository.save(User.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .password(passwordEncoder.encode(user.getPassword()))
+                .name(user.getName())
+                .phoneNumber(user.getPhoneNumber())
+                .roles(user.getRoles())
+                .build());
         mav.setViewName("index");
         return mav;
     }
+
+//    @PostMapping("/user/create")
+//    public void signup(@RequestBody User user){
+//        userRepository.save(User.builder()
+//                .email(user.getEmail())
+//                .password(passwordEncoder.encode(user.getPassword()))
+//                .name(user.getName())
+//                .phoneNumber(user.getPhoneNumber())
+//                .roles(Collections.singletonList("ROLE_USER"))
+//                .build());
+//
+//    }
 
     /**
      * 회원정보 페이지
@@ -197,6 +237,44 @@ public class UserController {
         message.setMessage("성공 코드");
 
         return ResponseEntity.ok(message);
+    }
+
+
+    @PostMapping("/login")
+    public User login(User user, HttpServletResponse response) {
+        User member = userRepository.findByUserId(user.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 ID 입니다."));
+        if (!passwordEncoder.matches(user.getPassword(), member.getPassword())) {
+            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+        }
+
+        String token = jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+        response.setHeader("X-AUTH-TOKEN", token);
+
+        Cookie cookie = new Cookie("X-AUTH-TOKEN", token);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        response.addCookie(cookie);
+
+        return new User(member);
+    }
+
+    @PostMapping("/logout")
+    public void logout(HttpServletResponse response){
+        Cookie cookie = new Cookie("X-AUTH-TOKEN", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
+
+    @GetMapping("/info")
+    public User getInfo(){
+        Object details = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(details != null && !(details instanceof  String)) return new User((User) details);
+        return null;
     }
 
 }

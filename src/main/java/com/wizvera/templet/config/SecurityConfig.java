@@ -1,5 +1,7 @@
 package com.wizvera.templet.config;
 
+import com.wizvera.templet.config.JWT.JwtCheckFilter;
+import com.wizvera.templet.config.JWT.JwtTokenProvider;
 import com.wizvera.templet.config.OAuth2.LoginSuccessHandler;
 import com.wizvera.templet.config.OAuth2.SpOAuth2SuccessHandler;
 import com.wizvera.templet.service.UserService;
@@ -14,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -21,11 +24,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.FilterInvocation;
@@ -49,6 +54,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
     private final CustomAuthDetails customAuthDetails;
     private final DataSource dataSource;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private SpOAuth2SuccessHandler successHandler;
@@ -92,17 +99,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             ;
                         })
                         .formLogin(
-                                login->login.loginPage("/login")        // 로그인 페이지
-                                .permitAll()
-                                .defaultSuccessUrl("/", false)  // 로그인 성공 시 이동 페이지  / alwaysUse 옵션 true : 페이지 url 접근 시도 후 로그인 시 해당 페이지 유지
-                                .failureUrl("/login-error")             // 로그인 실패 시 이동 페이지
-                                .authenticationDetailsSource(customAuthDetails)     // 권한 상세 정보 보기
-                                .successHandler(loginSuccessHandler)
-                        )
+//                                login->login.loginPage("/login")        // 로그인 페이지
+//                                .permitAll()
+//                                .defaultSuccessUrl("/", false)  // 로그인 성공 시 이동 페이지  / alwaysUse 옵션 true : 페이지 url 접근 시도 후 로그인 시 해당 페이지 유지
+//                                .failureUrl("/login-error")             // 로그인 실패 시 이동 페이지
+//                                .authenticationDetailsSource(customAuthDetails)     // 권한 상세 정보 보기
+//                                .successHandler(loginSuccessHandler)
+                        ).disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(new JwtCheckFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                         .oauth2Login(oauth2->oauth2                 // OAuth2 로그인 (google, naver 로그인)
                                 .successHandler(successHandler)
                         )
-                        .logout(logout->logout.logoutSuccessUrl("/"))       // 로그아웃
+//                        .logout(logout->logout.logoutSuccessUrl("/"))       // 로그아웃
                         .exceptionHandling(error->
                                 error
 //                                        .accessDeniedPage("/access-denied")     // 예외 발생 시 이동 페이지
@@ -140,8 +150,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder(){
-        return NoOpPasswordEncoder.getInstance();
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     @Bean

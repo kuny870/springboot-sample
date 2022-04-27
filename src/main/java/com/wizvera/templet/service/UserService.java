@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -87,7 +88,6 @@ public class UserService implements UserDetailsService {
             .email(user.getEmail())
             .phoneNumber(user.getPhoneNumber())
             .name(user.getName())
-            .role(user.getRole())
             .password(user.getPassword()).build()).getId();
     }
 
@@ -143,7 +143,7 @@ public class UserService implements UserDetailsService {
      * @throws UsernameNotFoundException 유저가 없을 때 예외 발생
      */
     @Override
-    public User loadUserByUsername(String userId) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         return userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UsernameNotFoundException((userId)));
     }
