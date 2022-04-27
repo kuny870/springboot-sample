@@ -40,7 +40,7 @@ spring:
       idle-timeout: 10000
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     # 개발
     properties:
