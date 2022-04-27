@@ -1,5 +1,6 @@
 package com.wizvera.templet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -56,6 +57,10 @@ public class User extends TimeEntity implements UserDetails {
     @ApiModelProperty(value = "사업자번호", example = "220-81-62517")
     @Column(name = "business_no")
     private String businessNo;
+
+    @JsonIgnore
+    @Column(name = "TOKEN", length = 64, nullable = true)
+    private String token;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();

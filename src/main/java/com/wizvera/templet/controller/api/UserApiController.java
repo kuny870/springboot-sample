@@ -46,7 +46,7 @@ public class UserApiController {
         Message message = new Message();
         message.setStatus(StatusEnum.OK);
         message.setMessage("성공 코드");
-        message.setData(optionalUser);
+        message.setData(optionalUser.get());
 
         return ResponseEntity.ok(message);
     }

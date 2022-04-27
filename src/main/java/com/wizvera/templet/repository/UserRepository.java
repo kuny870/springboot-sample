@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
 
-    @Query(value = "select * from user where role = 'ROLE_USER' LIMIT :pageNum, :pageSize", nativeQuery = true)
+    @Query(value = "select * from user where id not in (select user_id from user_roles where roles = 'ROLE_ADMIN') LIMIT :pageNum, :pageSize", nativeQuery = true)
     List<User> findByRoleUser(int pageNum, int pageSize);
 
     Optional<User> findByUserId(String userId);

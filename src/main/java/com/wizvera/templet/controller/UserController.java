@@ -195,9 +195,8 @@ public class UserController {
      */
     @GetMapping("/user/profile")
     public ModelAndView profile(ModelAndView mav, Authentication authentication) {
-        Optional<User> optionalUser = userRepository.findByUserId(authentication.getName());
-        User user = optionalUser.get();
-        mav.addObject("user", user);
+        Optional<User> user = userRepository.findByUserId(authentication.getName());
+        mav.addObject("user", user.get());
         mav.setViewName("profile");
         return mav;
     }

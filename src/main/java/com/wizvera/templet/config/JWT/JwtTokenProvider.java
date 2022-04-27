@@ -1,12 +1,15 @@
 package com.wizvera.templet.config.JWT;
 
+import com.wizvera.templet.model.User;
+import com.wizvera.templet.repository.UserRepository;
 import com.wizvera.templet.service.UserService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.wizvera.templet.util.CryptoUtils;
+import com.wizvera.templet.util.StringUtil;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,8 +18,11 @@ import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * JWT 토큰을 생성하고, 토큰을 검증하는 클래스.
@@ -35,6 +41,12 @@ public class JwtTokenProvider {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private final MessageSource messageSource;
+
     // JWT 토큰 생성
     public String createToken(String userPk, List<String> roles) {
         Claims claims = Jwts.claims().setSubject(userPk); // JWT payload 에 저장되는 정보단위
@@ -51,7 +63,9 @@ public class JwtTokenProvider {
 
     // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(String token) {
+        String userPk = this.getUserPk(token);
         UserDetails userDetails = userService.loadUserByUsername(this.getUserPk(token));
+
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
@@ -72,9 +86,46 @@ public class JwtTokenProvider {
     public boolean validateToken(String jwtToken) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+//			validateTokenIsNotForALoggedOutDevice(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
-        } catch (Exception e) {
-            return false;
         }
+        catch (ExpiredJwtException e) {
+            int errCode = Integer
+                    .valueOf(messageSource.getMessage("tokenExpired.code", null, LocaleContextHolder.getLocale()));
+            String errMsg = messageSource.getMessage("tokenExpired.msg", null, LocaleContextHolder.getLocale());
+            throw new JwtAuthException(errCode, errMsg);
+            // return false;
+        }
+        catch (SignatureException e) {
+            int errCode = Integer.valueOf(messageSource
+                    .getMessage("tokenSignatureError.code", null, LocaleContextHolder.getLocale()));
+            String errMsg = messageSource.getMessage("tokenSignatureError.msg", null, LocaleContextHolder.getLocale());
+            throw new JwtAuthException(errCode, errMsg);
+            // return false;
+        }
+        catch (IllegalArgumentException e) {
+            int errCode = Integer
+                    .valueOf(messageSource.getMessage("tokenIsEmpty.code", null, LocaleContextHolder.getLocale()));
+            String errMsg = messageSource.getMessage("tokenIsEmpty.msg", null, LocaleContextHolder.getLocale());
+            throw new JwtAuthException(errCode, errMsg);
+            // return false;
+        }
+        catch (MalformedJwtException e) {
+            int errCode = Integer
+                    .valueOf(messageSource.getMessage("tokenIsMalformed.code", null, LocaleContextHolder.getLocale()));
+            String errMsg = messageSource.getMessage("tokenIsMalformed.msg", null, LocaleContextHolder.getLocale());
+            throw new JwtAuthException(errCode, errMsg);
+            // return false;
+        }
+
+        catch (Exception e) {
+            e.printStackTrace();
+            int errCode = Integer
+                    .valueOf(messageSource.getMessage("tokenVerifyError.code", null, LocaleContextHolder.getLocale()));
+            String errMsg = messageSource.getMessage("tokenVerifyError.msg", null, LocaleContextHolder.getLocale());
+            throw new JwtAuthException(errCode, errMsg);
+            // return false;
+        }
+        // return true;
     }
 }

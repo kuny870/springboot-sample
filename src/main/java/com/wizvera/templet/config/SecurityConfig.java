@@ -54,6 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
     private final CustomAuthDetails customAuthDetails;
     private final DataSource dataSource;
+
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
@@ -106,9 +107,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                                .authenticationDetailsSource(customAuthDetails)     // 권한 상세 정보 보기
 //                                .successHandler(loginSuccessHandler)
                         ).disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .addFilterBefore(new JwtCheckFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .and()
+                        .addFilterBefore(new JwtCheckFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                         .oauth2Login(oauth2->oauth2                 // OAuth2 로그인 (google, naver 로그인)
                                 .successHandler(successHandler)
                         )
@@ -120,22 +121,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                         .authenticationEntryPoint(new CustomEntryPoint())   // 로그인 안하고 상세 url 접근시 핸들러 작동
                         )
 
-                // 로그인 유지하기
-                .rememberMe()
+                        // 로그인 유지하기
+                        .rememberMe()
                             .key("hello")           // 아무 키 값 고정
                             .userDetailsService(userDetailsService)
                             .tokenRepository(tokenRepository())     // 로그인 유지 토큰 저장을 위한 DB 생성
                         .and()
-                // 세션 관리
 
-                        .sessionManagement(
-                                s->s
-//                                        .sessionCreationPolicy(p-> SessionCreationPolicy.STATELESS)
-                                        .sessionFixation(sessionFixationConfigurer -> sessionFixationConfigurer.changeSessionId())
-                                .maximumSessions(1)     // 최대 유지 세션 갯수
-                                .maxSessionsPreventsLogin(false)    // true : 기존 세션 유지, false : 신규 세션 유지
-                                .expiredUrl("/session-expired")     // 세션 만료된 후 페이지 이동
-                        )
+                        // 세션 관리
+//                        .sessionManagement(
+//                                s->s
+////                                        .sessionCreationPolicy(p-> SessionCreationPolicy.STATELESS)
+//                                        .sessionFixation(sessionFixationConfigurer -> sessionFixationConfigurer.changeSessionId())
+//                                .maximumSessions(1)     // 최대 유지 세션 갯수
+//                                .maxSessionsPreventsLogin(false)    // true : 기존 세션 유지, false : 신규 세션 유지
+//                                .expiredUrl("/session-expired")     // 세션 만료된 후 페이지 이동
+//                        )
                         ;
     }
 
