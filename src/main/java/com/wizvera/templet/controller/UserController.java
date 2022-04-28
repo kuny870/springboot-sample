@@ -6,14 +6,12 @@ import com.wizvera.templet.model.response.Message;
 import com.wizvera.templet.model.response.StatusEnum;
 import com.wizvera.templet.repository.UserRepository;
 import com.wizvera.templet.service.UserService;
-import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Optional;
 
 @RequiredArgsConstructor
