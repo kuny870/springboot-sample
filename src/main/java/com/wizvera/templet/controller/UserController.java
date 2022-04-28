@@ -143,7 +143,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/user/create")
-    public ModelAndView signup(User user, ModelAndView mav) throws DuplicateMemberException { // 회원 추가
+    public ModelAndView signup(User user, ModelAndView mav) { // 회원 추가
         Long result = userService.save(user);
         if(result == 0L) {
             mav.setViewName("signupDuplicateId");
