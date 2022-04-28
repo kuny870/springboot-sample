@@ -155,12 +155,13 @@ public class UserController {
      * @return
      */
     @PostMapping("/user/create")
-    public ModelAndView signup(User user, ModelAndView mav) throws DuplicateMemberException { // 회원 추가
+    public ModelAndView signup(User user, ModelAndView mav) { // 회원 추가
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         Optional<User> optionalUser = userRepository.findByUserId(user.getUserId());
 
         if(optionalUser.isPresent()){
+            mav.setViewName("signupDuplicateId");
             return mav;
         }
 
@@ -239,7 +240,7 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public ModelAndView login(User user, HttpServletResponse response, ModelAndView mav) {
+    public void login(User user, HttpServletResponse response, ModelAndView mav) throws IOException {
         User member = userRepository.findByUserId(user.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 ID 입니다."));
         if (!passwordEncoder.matches(user.getPassword(), member.getPassword())) {
@@ -255,9 +256,7 @@ public class UserController {
         cookie.setSecure(true);
         response.addCookie(cookie);
 
-        mav.setViewName("index");
-
-        return mav;
+        response.sendRedirect("/");
     }
 
     @PostMapping("/logout")
