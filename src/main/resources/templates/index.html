@@ -10,36 +10,36 @@
 <body>
 
 <div class="container center-contents">
-    <div class="row">
+    <div class="row" style="margin-bottom: 20px;">
         <h1 class="title display-5"> 메인 페이지 </h1>
     </div>
 
     <div class="row">
         <div class="col-12">
-            <span th:text="${sessionId}"> session id </span>
+            <span th:text="${sessionId}" hidden> session id </span>
         </div>
     </div>
 
     <div class="links" style="text-align: center;">
 
-        <div class="link" sec:authorize="!authenticated">
-            <a href="/login">  로그인 </a>
+        <div class="link main-css" sec:authorize="!authenticated">
+            <a href="/login" class="btn btn-lg btn-secondary btn-block"> 로그인 </a>
         </div>
-        <div class="link" sec:authorize="!authenticated">
-            <a href="/signup">  회원가입 </a>
+        <div class="link main-css" sec:authorize="!authenticated">
+            <a href="/signup" class="btn btn-lg btn-secondary btn-block"> 회원가입 </a>
         </div>
-        <div class="link" sec:authorize="authenticated">
-            <a href="/user/profile">  내 정보  </a>
+        <div class="link main-css" sec:authorize="authenticated">
+            <a href="/user/profile" class="btn btn-lg btn-secondary btn-block"> 내 정보 </a>
         </div>
-        <div class="link" sec:authorize="authenticated">
-            <a href="/user/page">  유저 페이지  </a>
+        <div class="link main-css" sec:authorize="authenticated">
+            <a href="/user/page" class="btn btn-lg btn-secondary btn-block"> 유저 페이지 </a>
         </div>
-        <div class="link" sec:authorize="authenticated">
-            <a href="/admin/page">  관리자 페이지 </a>
+        <div class="link main-css" sec:authorize="authenticated">
+            <a href="/admin/page" class="btn btn-lg btn-secondary btn-block"> 관리자 페이지 </a>
         </div>
-        <div class="link" sec:authorize="authenticated">
+        <div class="link main-css" sec:authorize="authenticated">
             <form th:action="@{/logout}" method="post">
-                <button class="btn btn-info" type="submit">  로그아웃 </button>
+                <button class="btn btn-info btn-lg btn-secondary btn-block" type="submit">  로그아웃 </button>
             </form>
         </div>
     </div>
