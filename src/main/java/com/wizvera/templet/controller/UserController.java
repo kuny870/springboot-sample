@@ -5,7 +5,6 @@ import com.wizvera.templet.model.response.Message;
 import com.wizvera.templet.model.response.StatusEnum;
 import com.wizvera.templet.repository.UserRepository;
 import com.wizvera.templet.service.UserService;
-import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
