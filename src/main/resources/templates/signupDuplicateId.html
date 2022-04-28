@@ -31,15 +31,15 @@
 
             <div class="checkbox mb-3" style="text-align: center; margin-top: 10px;">
                 <label>
-                    <input type="radio" name="auth" value="ROLE_ADMIN,ROLE_USER"> admin
-                    <input type="radio" name="auth" value="ROLE_USER" checked="checked"> user <br>
+                    <input type="radio" name="role" value="ROLE_ADMIN,ROLE_USER" checked="checked"> admin
+                    <input type="radio" name="role" value="ROLE_USER"> user <br>
                 </label>
             </div>
 
             <button class="btn btn-lg btn-primary btn-block"  type="submit"> 가입하기 </button>
             <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/login'}"> 로그인 </a>
             <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/'}"> 메인 페이지 </a>
-            <div class="error-message" th:if="${signupError}">
+            <div class="error-message">
                 <span style="color: red"> 동일한 아이디가 존재합니다. </span>
             </div>
         </form>

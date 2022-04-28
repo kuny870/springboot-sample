@@ -72,7 +72,7 @@ public class UserService implements UserDetailsService {
      * @param user 회원정보가 들어있는 DTO
      * @return 저장되는 회원의 PK
      */
-    public Long save(User user) throws DuplicateMemberException {
+    public Long save(User user) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         user.setPassword(encoder.encode(user.getPassword()));
 
