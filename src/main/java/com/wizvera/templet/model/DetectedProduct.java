@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -73,6 +72,10 @@ public class DetectedProduct extends TimeEntity {
     @ApiModelProperty(value = "가품 퍼센트")
     @Column(name = "imitation_percentage")
     private String imitationPercentage;
+
+    @ApiModelProperty(value = "크롤링한 데이터")
+    @Column(name = "extra")
+    private String extra;
 
     @ApiModelProperty(value = "삭제여부", example = "N")
     @Column(name = "del_yn", columnDefinition = "CHAR(1) NOT NULL DEFAULT 'N'")

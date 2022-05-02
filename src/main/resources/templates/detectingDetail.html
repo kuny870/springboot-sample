@@ -25,7 +25,7 @@
             </div>
 
             <div th:each="dpi : ${dp.dpiList}">
-                <img th:src="'data:image/jpeg;base64,'+${dpi.productImageString}" width="120">
+                <img th:src="'/resources/static/images/product/' + ${dpi.productImage}" width="120">
             </div>
 
             <input multiple="multiple"  type="file" name="file" required="required">

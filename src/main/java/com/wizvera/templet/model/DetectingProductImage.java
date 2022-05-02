@@ -2,12 +2,10 @@ package com.wizvera.templet.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 
@@ -34,11 +32,7 @@ public class DetectingProductImage {
     private String type;
 
     @ApiModelProperty(value = "제품 이미지")
-    @Lob
-    @Column(name = "product_image", columnDefinition = "LONGBLOB")
-    private byte[] productImage;
-
-    @Transient
-    private String productImageString;
+    @Column(name = "product_image")
+    private String productImage;
 
 }
