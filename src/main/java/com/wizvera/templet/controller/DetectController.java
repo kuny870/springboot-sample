@@ -14,12 +14,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -51,9 +51,10 @@ public class DetectController {
     @PostMapping(value = "/detecting/product/regist")
     public ModelAndView detectingProductRegist3(
             DetectingProduct detectingProduct
+            , MultipartHttpServletRequest mhsr
             , ModelAndView mav) throws IOException {
 
-        detectingProductService.regist(detectingProduct);
+        detectingProductService.regist(detectingProduct, mhsr);
 
         mav.setViewName("UserPage");
         return mav;
@@ -121,10 +122,6 @@ public class DetectController {
         Optional<DetectingProduct> optionalDetectingProduct = detectingProductRepository.findById(id);
         DetectingProduct dp = optionalDetectingProduct.get();
 
-        for(int i=0; i<dp.getDpiList().size(); i++) {
-            dp.getDpiList().get(i).setProductImageString(Base64.getEncoder().encodeToString(dp.getDpiList().get(i).getProductImage()));
-        }
-
         mav.addObject("dp", dp);
         mav.setViewName("detectingDetail");
         return mav;
@@ -139,12 +136,13 @@ public class DetectController {
     @PostMapping(value = "/detecting/product/update", consumes = {"multipart/form-data"})
     public ResponseEntity<Message> detectingProductUpdate2(
             DetectingProduct detectingProduct
+            , MultipartHttpServletRequest mhsr
             , HttpServletResponse response) throws IOException {
 
         Optional<DetectingProduct> tempDp = detectingProductRepository.findById(detectingProduct.getId());
         detectingProduct.setCreatedDate(tempDp.get().getCreatedDate());
 
-        detectingProductService.update(detectingProduct);
+        detectingProductService.update(detectingProduct, mhsr);
 
         Message message = new Message();
         message.setStatus(StatusEnum.OK);

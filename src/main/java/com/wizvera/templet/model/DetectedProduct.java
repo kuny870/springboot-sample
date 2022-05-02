@@ -74,6 +74,10 @@ public class DetectedProduct extends TimeEntity {
     @Column(name = "imitation_percentage")
     private String imitationPercentage;
 
+    @ApiModelProperty(value = "크롤링한 데이터")
+    @Column(name = "extra")
+    private String extra;
+
     @ApiModelProperty(value = "삭제여부", example = "N")
     @Column(name = "del_yn", columnDefinition = "CHAR(1) NOT NULL DEFAULT 'N'")
     private String delYn;

@@ -34,11 +34,7 @@ public class DetectingProductImage {
     private String type;
 
     @ApiModelProperty(value = "제품 이미지")
-    @Lob
-    @Column(name = "product_image", columnDefinition = "LONGBLOB")
-    private byte[] productImage;
-
-    @Transient
-    private String productImageString;
+    @Column(name = "product_image")
+    private String productImage;
 
 }

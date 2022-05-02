@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -48,9 +49,10 @@ public class DetectingApiController {
     @ApiOperation(value = "가품탐지 할 제품 등록", notes = "가품탐지 할 제품을 등록한다.")
     @PostMapping(value = "/product/regist", consumes = {"multipart/form-data"})
     public ResponseEntity<Message> detectingProductRegist(
-            @ApiParam(value = "제품 정보", required = true) DetectingProduct detectingProduct) throws IOException {
+            @ApiParam(value = "제품 정보", required = true) DetectingProduct detectingProduct
+            , MultipartHttpServletRequest mhsr) throws IOException {
 
-        detectingProductService.regist(detectingProduct);
+        detectingProductService.regist(detectingProduct, mhsr);
 
         Message message = new Message();
         message.setStatus(StatusEnum.OK);
@@ -77,12 +79,13 @@ public class DetectingApiController {
     @ApiOperation(value = "가품탐지 할 제품 수정", notes = "가품탐지 할 제품을 수정한다.")
     @PostMapping(value = "/product/update", consumes = {"multipart/form-data"})
     public ResponseEntity<Message> detectingProductUpdate(
-            @ApiParam(value = "제품 정보", required = true) DetectingProduct detectingProduct) throws IOException {
+            @ApiParam(value = "제품 정보", required = true) DetectingProduct detectingProduct
+            , MultipartHttpServletRequest mhsr) throws IOException {
 
         Optional<DetectingProduct> tempDp = detectingProductRepository.findById(detectingProduct.getId());
         detectingProduct.setCreatedDate(tempDp.get().getCreatedDate());
 
-        detectingProductService.update(detectingProduct);
+        detectingProductService.update(detectingProduct, mhsr);
 
         Message message = new Message();
         message.setStatus(StatusEnum.OK);
