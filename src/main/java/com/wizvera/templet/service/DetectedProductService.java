@@ -5,6 +5,7 @@ import com.wizvera.templet.model.DetectedProductReview;
 import com.wizvera.templet.repository.DetectedProductRepository;
 import com.wizvera.templet.repository.DetectedProductReviewRepository;
 import lombok.RequiredArgsConstructor;
+import net.minidev.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -63,6 +64,16 @@ public class DetectedProductService {
         getDetectedProduct.setDelYn("Y");
 
         return detectedProductRepository.save(getDetectedProduct);
+    }
+
+
+    /**
+     * 가품탐지된 제품의 크롤링 데이터
+     * @param id
+     * @return
+     */
+    public JSONObject findData(Long id) {
+        return detectedProductRepository.findData(id);
     }
 
 }

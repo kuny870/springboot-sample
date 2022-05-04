@@ -8,8 +8,11 @@ import com.wizvera.templet.repository.DetectedProductRepository;
 import com.wizvera.templet.repository.DetectingProductRepository;
 import com.wizvera.templet.service.DetectedProductService;
 import com.wizvera.templet.service.DetectingProductService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -223,6 +226,27 @@ public class DetectController {
         mav.addObject("dp", optionalDetectedProduct.get());
         mav.setViewName("detectedDetail");
         return mav;
+    }
+
+    /**
+     * 가품탐지된 제품의 크롤링 데이터 불러오기
+     * @param id
+     * @return
+     * @throws IOException
+     */
+    @ApiOperation(value = "가품탐지 된 제품의 크롤링 데이터", notes = "가품탐지 된 제품의 크롤링 데이터를 불러온다.")
+    @GetMapping(value = "/detected/product/data")
+    public ResponseEntity<Message> detectedProductData(
+            @ApiParam(value = "제품 아이디", required = true) Long id) {
+
+        JSONObject jsonData = detectedProductService.findData(id);
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+        message.setData(jsonData);
+
+        return ResponseEntity.ok(message);
     }
 
 }

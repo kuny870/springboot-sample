@@ -24,6 +24,7 @@
                 <th scope="col"> 가품 퍼센트 </th>
                 <th scope="col"> 등록날짜 </th>
                 <th scope="col"> 수정날짜 </th>
+                <th scope="col"> 크롤링 데이터 </th>
             </tr>
             </thead>
             <tbody>
@@ -40,6 +41,10 @@
                 <td th:text="*{createdDate}"> 등록날짜 </td>
                 <td th:text="*{modifiedDate}"> 수정날짜 </td>
 
+                <td>
+                    <button class="btn btn-approval" type="button" th:onclick="|view('*{id}')|"> 보기 </button>
+                </td>
+
             </tr>
             </tbody>
         </table>
@@ -51,4 +56,16 @@
 </div>
 </body>
 
+
+<script>
+
+    var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
+
+    function view(id) {
+
+        location.href = contextPath + "/detected/product/data?id=" + id;
+
+    }
+
+</script>
 </html>

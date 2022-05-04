@@ -6,8 +6,6 @@ import com.wizvera.templet.config.OAuth2.LoginSuccessHandler;
 import com.wizvera.templet.config.OAuth2.SpOAuth2SuccessHandler;
 import com.wizvera.templet.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
@@ -31,14 +29,16 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.FilterInvocation;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSessionEvent;
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
@@ -51,6 +51,7 @@ import java.util.Collection;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
+    @Resource(name = "userService")
     private UserDetailsService userDetailsService;
     private final CustomAuthDetails customAuthDetails;
     private final DataSource dataSource;
@@ -80,11 +81,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         );
     }
 
+    @Bean
+    public RememberMeServices rememberMeServices(PersistentTokenRepository ptr) {
+        PersistentTokenBasedRememberMeServices rememberMeServices = new PersistentTokenBasedRememberMeServices("jbcpCalendar", userDetailsService, tokenRepository());
+        rememberMeServices.setParameter("obscure-remember-me");
+        rememberMeServices.setCookieName("obscure-remember-me");
+        return rememberMeServices;
+    }
+
     // security config 설정
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http
+                .httpBasic().disable()
                 .csrf().disable()       // csrf : 사이트간 요청 위조
                 .authorizeRequests(request-> {
                     request
@@ -109,6 +119,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         ).disable()
                         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                         .and()
+
                         .addFilterBefore(new JwtCheckFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                         .oauth2Login(oauth2->oauth2                 // OAuth2 로그인 (google, naver 로그인)
                                 .successHandler(successHandler)
@@ -123,9 +134,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                         // 로그인 유지하기
                         .rememberMe()
-                            .key("hello")           // 아무 키 값 고정
-                            .userDetailsService(userDetailsService)
-                            .tokenRepository(tokenRepository())     // 로그인 유지 토큰 저장을 위한 DB 생성
+                            .key("jbcpCalendar")           // 아무 키 값 고정
+                            .rememberMeParameter("jbcpCalendar-remember-me")
+                            .rememberMeCookieName("jbcpCalendar-remember-me")
+//                            .userDetailsService(userDetailsService)
+//                            .tokenRepository(tokenRepository())     // 로그인 유지 토큰 저장을 위한 DB 생성
                         .and()
 
                         // 세션 관리
@@ -138,6 +151,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                                .expiredUrl("/session-expired")     // 세션 만료된 후 페이지 이동
 //                        )
                         ;
+
     }
 
 

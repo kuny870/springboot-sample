@@ -1,10 +1,7 @@
 package com.wizvera.templet.config.JWT;
 
-import com.wizvera.templet.model.User;
 import com.wizvera.templet.repository.UserRepository;
 import com.wizvera.templet.service.UserService;
-import com.wizvera.templet.util.CryptoUtils;
-import com.wizvera.templet.util.StringUtil;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +15,8 @@ import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * JWT 토큰을 생성하고, 토큰을 검증하는 클래스.

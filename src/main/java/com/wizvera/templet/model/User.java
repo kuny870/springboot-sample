@@ -59,7 +59,7 @@ public class User extends TimeEntity implements UserDetails {
     private String businessNo;
 
     @JsonIgnore
-    @Column(name = "TOKEN", length = 64, nullable = true)
+    @Column(name = "token", length = 64, nullable = true)
     private String token;
 
     @ElementCollection(fetch = FetchType.EAGER)

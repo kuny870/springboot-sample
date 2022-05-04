@@ -237,7 +237,7 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public void login(User user, HttpServletResponse response, ModelAndView mav) throws IOException {
+    public void login(User user, HttpServletResponse response, ModelAndView mav, String remember) throws IOException {
         User member = userRepository.findByUserId(user.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 ID 입니다."));
         if (!passwordEncoder.matches(user.getPassword(), member.getPassword())) {

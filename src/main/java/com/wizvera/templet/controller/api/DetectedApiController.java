@@ -13,12 +13,15 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Api(tags = { "201. 가품탐지 된 제품 정보" })
@@ -87,6 +90,21 @@ public class DetectedApiController {
         Message message = new Message();
         message.setStatus(StatusEnum.OK);
         message.setMessage("성공 코드");
+
+        return ResponseEntity.ok(message);
+    }
+
+    @ApiOperation(value = "가품탐지 된 제품의 크롤링 데이터", notes = "가품탐지 된 제품의 크롤링 데이터를 불러온다.")
+    @GetMapping(value = "/product/data")
+    public ResponseEntity<Message> detectedProductData(
+            @ApiParam(value = "제품 아이디", required = true) Long id) {
+
+        JSONObject jsonData = detectedProductService.findData(id);
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+        message.setData(jsonData);
 
         return ResponseEntity.ok(message);
     }
