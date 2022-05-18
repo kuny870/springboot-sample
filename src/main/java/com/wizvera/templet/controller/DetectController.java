@@ -228,6 +228,26 @@ public class DetectController {
         return mav;
     }
 
+
+
+    /**
+     * 가품탐지된 제품의 크롤링 데이터 보기
+     * @param id
+     * @return
+     * @throws IOException
+     */
+    @GetMapping(value = "/detected/product/crolling/view")
+    public ModelAndView detectedProductCrollingView(
+            @ApiParam(value = "제품 아이디", required = true) Long id
+            , ModelAndView mav) {
+
+        mav.addObject("productId", id);
+        mav.setViewName("detectedData");
+
+        return mav;
+    }
+
+
     /**
      * 가품탐지된 제품의 크롤링 데이터 불러오기
      * @param id
@@ -235,9 +255,9 @@ public class DetectController {
      * @throws IOException
      */
     @ApiOperation(value = "가품탐지 된 제품의 크롤링 데이터", notes = "가품탐지 된 제품의 크롤링 데이터를 불러온다.")
-    @GetMapping(value = "/detected/product/data")
-    public ResponseEntity<Message> detectedProductData(
-            @ApiParam(value = "제품 아이디", required = true) Long id) {
+    @PostMapping(value = "/detected/product/crolling/data")
+    public ResponseEntity<Message> detectedProductCrollingData(
+            @ApiParam(value = "제품 아이디", required = true) @RequestParam("id") Long id) {
 
         JSONObject jsonData = detectedProductService.findData(id);
 
