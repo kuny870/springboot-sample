@@ -22,6 +22,12 @@
   text-align: center;
 }
 
+.crolling-list {
+  margin: auto;
+  max-width: 530px;
+  text-align: center;
+}
+
 .center {
   text-align: center;
 }
