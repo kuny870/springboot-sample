@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/header :: headFragment"></head>
+<head>
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+
+
+<div class="container center-contents">
+    <div class="row">
+        <form class="form-signin" method="post" th:action="@{/user/update}">
+
+            <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> 회원정보 </h1>
+
+            <label for="userId" class="sr-only">아이디</label>
+            <input type="text" id="userId" name="userId" class="form-control" placeholder="아이디" th:value="*{user.userId}" readonly>
+
+            <label for="password" class="sr-only">비밀번호</label>
+            <input type="password" id="password" name="password"  class="form-control" placeholder="비밀번호" required>
+
+            <label for="name" class="sr-only">이름</label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="이름" th:value="*{user.name}">
+
+            <label for="email" class="sr-only">이메일</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="이메일" th:value="*{user.email}">
+
+            <label for="phoneNumber" class="sr-only">휴대폰번호</label>
+            <input type="number" id="phoneNumber" name="phoneNumber" class="form-control" placeholder="휴대폰번호" th:value="*{user.phoneNumber}">
+            <br>
+            <button class="btn btn-lg btn-primary btn-block"  type="submit"> 수정하기 </button>
+            <button class="btn btn-lg btn-block btn-remove"  th:onclick="|userDelete('*{user.id}')|"> 탈퇴하기 </button>
+            <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/'}"> 메인 페이지 </a>
+        </form>
+
+    </div>
+</div>
+
+<script>
+
+    var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
+
+    function userDelete(id) {
+
+        var url = contextPath + '/user/delete';
+
+        $.ajax({
+            url : url
+            , type : "GET"
+            , data: {
+                'id' : id
+            }
+            , contentType : "application/json; charset=utf-8"
+            , success: function(result) {
+                if(result) {
+                    location.href("/")
+                }else {
+                    alert("알 수 없는 에러입니다.");
+                }
+
+            }
+        });
+
+    }
+
+</script>
+
+<script th:src="@{/js/bootstrap.js}" />
+</body>
+</html>

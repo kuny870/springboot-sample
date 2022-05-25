@@ -18,9 +18,9 @@ public class Scheduler {
     private ScheduleRepository scheduleRepository;
 
     /**
-     * 오른쪽부터 : (*년: 생략가능) *주 *월 *일 *시 *분 *초
+     * 오른쪽부터 : *주 *월 *일 *시 *분 *초
      */
-    @Scheduled(cron = "1 1 14 * * * *")
+    @Scheduled(cron = "1 1 14 * * *")
     public void expiredUser() {
 
         String value = "update user set status = 1 where (date_format(now(), '%Y%m%d') - date_format(modified_date, '%Y%m%d')) > 10000 and status = 0";

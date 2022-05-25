@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head th:replace="fragments/header :: headFragment"></head>
+<head>
+    <title class="center"> 가품탐지할 제품 등록 </title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+
+    <br>
+    <div class="container center-contents">
+        <div class="row">
+            <form class="form-signin" name="fileForm" action="/detecting/product/regist" method="post" enctype="multipart/form-data">
+
+                <input type="text" id="productName" name="productName" class="form-control" placeholder="제품명" th:value="모자" required autofocus>
+                <input type="text" id="searchSite" name="searchSite"  class="form-control" placeholder="검색 사이트" th:value="11번가" required>
+                <input type="text" name="searchKeyword" class="form-control" placeholder="검색 키워드" th:value="모자" required="required">
+                <input type="text" name="searchKeyword" class="form-control" placeholder="검색 키워드" th:value="나이키" required="required">
+
+                <input type="hidden" name="regUser" class="form-control" placeholder="등록자" th:value="*{session['id']}" required="required">
+
+                <br>
+                <input multiple="multiple"  type="file" name="file" required="required">
+                <br>
+                <br>
+
+                <button class="btn btn-lg btn-primary btn-block"  type="submit"> 등록하기 </button>
+                <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/user/page'}"> 유저 페이지 </a>
+             </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -28,8 +28,12 @@ public class SpOAuth2User {
 
     private Long userId;    // User
 
+    private String userUserId;
+
     private String name;
     private String email;
+    private String phoneNumber;
+
     @CreatedDate
     private String created;
     private Provider provider;
@@ -46,8 +50,10 @@ public class SpOAuth2User {
                 return SpOAuth2User.builder()
                         .oauth2UserId(format("%s_%s", name(), user.getAttribute("sub")))
                         .provider(google)
+                        .userUserId(user.getAttribute("userId"))
                         .email(user.getAttribute("email"))
                         .name(user.getAttribute("name"))
+                        .phoneNumber(user.getAttribute("phoneNumber"))
                         .build();
             }
         },
@@ -57,8 +63,10 @@ public class SpOAuth2User {
                 return SpOAuth2User.builder()
                         .oauth2UserId(format("%s_%s", name(), resp.get("id")))
                         .provider(naver)
+                        .userUserId(""+resp.get("userId"))
                         .email(""+resp.get("email"))
                         .name(""+resp.get("name"))
+                        .phoneNumber(""+resp.get("phoneNumber"))
                         .build();
             }
         };

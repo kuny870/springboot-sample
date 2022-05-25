@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head th:replace="fragments/header :: headFragment"></head>
+<head>
+    <title class="center"> 가품탐지 제품 상세  </title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body class="userList-form">
+
+<div class="container center-contents">
+    <div class="row">
+        <form class="form-signin2" id="update" method="post" action="/detecting/product/update" enctype="multipart/form-data">
+
+            <input type="text" id="productName" name="productName" class="form-control" placeholder="제품명" th:value="*{dp.productName}" readonly>
+
+            <input type="text" id="pageId" name="pageId"  class="form-control" placeholder="페이지 아이디" th:value="*{dp.pageId}" readonly>
+
+            <input type="text" id="pageAddress" name="pageAddress"  class="form-control" placeholder="페이지 주소" th:value="*{dp.pageAddress}" readonly>
+
+            <img th:src="*{dp.pageMainImage}" width="120">
+
+            <input type="text" id="pageSite" name="pageSite"  class="form-control" placeholder="페이지 사이트" th:value="*{dp.pageSite}" readonly>
+
+            <input type="text" id="seller" name="seller"  class="form-control" placeholder="판매자" th:value="*{dp.seller}" readonly>
+
+            <input type="text" id="originPrice" name="originPrice" class="form-control" placeholder="원래 가격" th:value="*{dp.originPrice}" readonly>
+
+            <input type="text" id="price" name="price" class="form-control" placeholder="판매 가격" th:value="*{dp.price}" readonly>
+
+            <input type="text" id="averageScore" name="averageScore" class="form-control" placeholder="평점" th:value="*{dp.averageScore}" readonly>
+
+            <input type="text" id="reviewCount" name="reviewCount" class="form-control" placeholder="리뷰개수" th:value="*{dp.reviewCount}" readonly>
+
+            <input type="text" id="imitationPercentage" name="imitationPercentage" class="form-control" placeholder="가품 퍼센트" th:value="*{dp.imitationPercentage}" readonly>
+
+            <div th:each="dpr : ${dp.dprList}">
+                <input type="text" name="comment" class="form-control" placeholder="댓글" th:value="*{dpr.comment}" readonly>
+            </div>
+
+            <br>
+
+            <a class="btn btn-lg btn-secondary btn-block" th:href="@{'/detected/product/list'}"> 가품탐지된 제품 목록 </a>
+        </form>
+    </div>
+</div>
+
+</body>
+
+</html>

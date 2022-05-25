@@ -1,6 +1,7 @@
 package com.wizvera.templet.model;
 
-import com.wizvera.templet.model.converter.UserStatusConverter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
@@ -12,89 +13,95 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Data
 @Entity
 @DynamicInsert
 @DynamicUpdate
+@ApiModel(value = "사용자")
 public class User extends TimeEntity implements UserDetails {
 
+    @ApiModelProperty(value = "pk")
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ApiModelProperty(value = "사용자의 아이디", example = "admin@naver.com", required = true)
-    @Column(name = "email", unique = true)
-    private String email;
+    @ApiModelProperty(value = "사용자의 아이디", example = "admin", required = true)
+    @Column(name = "user_id", unique = true, columnDefinition = "VARCHAR(45) NOT NULL")
+    private String userId;
 
-    @ApiModelProperty(value = "사용자의 이름", example = "홍길동", required = true)
-    @Column(name = "name")
-    private String name;
-
-    @ApiModelProperty(value = "사용자의 비밀번호", example = "1234", required = true)
+    @ApiModelProperty(value = "비밀번호", example = "1234")
     @Column(name = "password")
     private String password;
 
-    @ApiModelProperty(value = "사용자의 권한", example = "ROLE_ADMIN")
-    @Column(name = "auth", columnDefinition = "varchar(255) NOT NULL DEFAULT 'ROLE_USER'")
-    private String auth;
+    @ApiModelProperty(value = "이메일", example = "admin@naver.com")
+    @Column(name = "email")
+    private String email;
 
-    @ApiModelProperty(value = "사용자의 계정상태", example = "1")
-    @Column(name = "status", columnDefinition = "int DEFAULT 0")
-    @Convert(converter = UserStatusConverter.class)
-    private UserStatus status;
+    @ApiModelProperty(value = "이름", example = "홍길동")
+    @Column(name = "name")
+    private String name;
 
-    @ApiModelProperty(value = "사용자의 승인상태", example = "Y")
-    @Column(name = "approval", columnDefinition = "CHAR(1) NOT NULL DEFAULT 'N'")
-    private String approval;
+    @ApiModelProperty(value = "연락처", example = "010-1234-1234")
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
-    @Column(name = "enabled")
-    private boolean enabled;
+    @ApiModelProperty(value = "회사명", example = "(주)위즈베라")
+    @Column(name = "company_name")
+    private String companyName;
 
-//    public static enum State {
-//        NORMAL, // 일반 사용자
-//        EXPIRATION // 계정 만료 사용자
-//    }
+    @ApiModelProperty(value = "사업자번호", example = "220-81-62517")
+    @Column(name = "business_no")
+    private String businessNo;
 
-    @ApiModelProperty(value = "사용자의 삭제여부", example = "N")
-    @Column(name = "del_yn", columnDefinition = "CHAR(1) NOT NULL DEFAULT 'N'")
-    private String delYn;
+    @JsonIgnore
+    @Column(name = "token", length = 64, nullable = true)
+    private String token;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles = new ArrayList<>();
 
-    @Builder
-    public User(String email, String password, String name, String auth, String delYn, UserStatus status) {
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        if(auth == null) {
-            this.auth = "ROLE_USER";
-        }else {
-            this.auth = auth;
-        }
-        this.delYn = "N";
-        this.status = status;
+    public User(User details) {
+        super();
     }
 
     // 사용자의 권한을 콜렉션 형태로 반환
     // 단, 클래스 자료형은 GrantedAuthority를 구현해야함
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> roles = new HashSet<>();
-        for (String role : auth.split(",")) {
-            roles.add(new SimpleGrantedAuthority(role));
-        }
-        return roles;
+        return this.roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+    @ApiModelProperty(value = "승인여부", example = "Y")
+    @Column(name = "approval", columnDefinition = "CHAR(1) NOT NULL DEFAULT 'N'")
+    private String approval;
+
+    @ApiModelProperty(value = "삭제여부", example = "N")
+    @Column(name = "del_yn", columnDefinition = "CHAR(1) NOT NULL DEFAULT 'N'")
+    private String delYn;
+
+
+    @Builder
+    public User(String userId, String email, String password, String name, String phoneNumber, List<String> roles) {
+        this.userId = userId;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.delYn = "N";
+        this.roles = roles;
     }
 
     // 사용자의 id를 반환 (unique한 값)
     @Override
     public String getUsername() {
-        return name;
+        return userId;
     }
 
     // 사용자의 password를 반환

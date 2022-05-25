@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html 	xmlns:th="http://www.thymeleaf.org"
+         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head th:replace="fragments/header :: headFragment"></head>
+<head>
+    <title class="center"> 가품탐지 제품 목록  </title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body class="detecting-product-list-form">
+<div>
+    <a class="btn btn-lg btn-secondary btn-block2" th:href="@{'/user/page'}"> 유저 페이지 </a>
+    <main role="main">
+        <div class="title-bar">
+            <h4> 가품탐지 제품 목록 </h4>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col"> No. </th>
+                <th scope="col"> 검색 사이트 </th>
+                <th scope="col"> 제품명 </th>
+                <th scope="col"> 등록날짜 </th>
+                <th scope="col"> 수정날짜 </th>
+                <th scope="col"> 삭제여부 </th>
+                <th scope="col"> 가품탐지 </th>
+                <th scope="col"> 삭제/복구</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="detectingProduct : ${page?.content}" th:object="${detectingProduct}">
+
+                <td th:text="*{id}"> No </td>
+                <td th:text="*{searchSite}"> 검색 사이트 </td>
+                <td>
+                    <a th:href="@{/detecting/product/detail(id=*{id})}" th:text="*{productName}"/>
+                </td>
+                <td th:text="*{createdDate}"> 가입날짜 </td>
+                <td th:text="*{modifiedDate}"> 수정날짜 </td>
+                <td th:text="*{delYn}"> 삭제여부 </td>
+
+
+                <td>
+                    <button class="btn btn-approval" type="button" th:onclick="|detecting('*{id}')|"> 판별 </button>
+                </td>
+
+
+                <td>
+                    <th:block th:if="*{delYn == 'N'}">
+                        <button class="btn btn-remove" type="button" th:onclick="|remove('*{id}')|"> 삭제 </button>
+                    </th:block>
+                    <th:block th:if="*{delYn == 'Y'}">
+                        <button class="btn btn-restore" type="button" th:onclick="|restore('*{id}')|"> 복구 </button>
+                    </th:block>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:replace="fragments/paging :: paging(path='/detectingList', paging=${page})" />
+
+    </main>
+
+</div>
+</body>
+
+<script>
+
+    var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
+
+    function detecting(id) {
+
+        var url = contextPath + '/detected/product/regist';
+
+        $.ajax({
+            url : url
+            , type : "GET"
+            , data: {
+                'id' : id
+            }
+            , contentType : "application/json; charset=utf-8"
+            , success: function(result) {
+                if(result) {
+                }else {
+                    alert("알 수 없는 에러입니다.");
+                }
+
+            }
+        });
+
+    }
+
+
+    function remove(id) {
+
+        var url = contextPath + '/detecting/product/delete';
+
+        $.ajax({
+            url : url
+            , type : "GET"
+            , data: {
+                'id' : id
+            }
+            , contentType : "application/json; charset=utf-8"
+            , success: function(result) {
+                if(result) {
+                    location.reload();
+                }else {
+                    alert("알 수 없는 에러입니다.");
+                }
+
+            }
+        });
+
+    }
+
+
+    function restore(id) {
+
+        var url = contextPath + '/detecting/product/restore';
+
+        $.ajax({
+            url : url
+            , type : "GET"
+            , data: {
+                'id' : id
+            }
+            , contentType : "application/json; charset=utf-8"
+            , success: function(result) {
+                if(result) {
+                    location.reload();
+                }else {
+                    alert("알 수 없는 에러입니다.");
+                }
+
+            }
+        });
+
+    }
+
+</script>
+
+</html>

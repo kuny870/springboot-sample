@@ -8,7 +8,7 @@
 </head>
 <body class="userList-form">
 <div>
-    <a class="btn btn-lg btn-secondary btn-block2" th:href="@{'/admin-page'}"> 관리자 페이지 </a>
+    <a class="btn btn-lg btn-secondary btn-block2" th:href="@{'/admin/page'}"> 관리자 페이지 </a>
     <main role="main">
         <div class="title-bar">
             <h4> 회원 목록 </h4>
@@ -19,8 +19,8 @@
                 <th scope="col"> No. </th>
                 <th scope="col"> 아이디 </th>
                 <th scope="col"> 이름 </th>
-                <th scope="col"> 상태 </th>
-                <th scope="col"> 권한 </th>
+                <th scope="col"> 이메일 </th>
+                <th scope="col"> 핸드폰번호 </th>
                 <th scope="col"> 가입날짜 </th>
                 <th scope="col"> 수정날짜 </th>
                 <th scope="col"> 승인여부 </th>
@@ -34,14 +34,10 @@
             <tr th:each="user : ${page?.content}" th:object="${user}">
 
                 <td th:text="*{id}"> No </td>
-                <td th:text="*{email}"> 아이디 </td>
+                <td th:text="*{userId}"> 아이디 </td>
                 <td th:text="*{name}"> 이름 </td>
-                <td th:text="*{status.description}"> 상태 </td>
-                <td>
-                    <div th:each="auth : *{authorities}" th:object="${auth}">
-                        <span th:text="*{authority}">권한</span>
-                    </div>
-                </td>
+                <td th:text="*{email}"> 이메일 </td>
+                <td th:text="*{phoneNumber}"> 핸드폰번호 </td>
                 <td th:text="*{createdDate}"> 가입날짜 </td>
                 <td th:text="*{modifiedDate}"> 수정날짜 </td>
                 <td th:text="*{approval}"> 승인여부 </td>
@@ -69,7 +65,7 @@
             </tbody>
         </table>
 
-        <div th:replace="fragments/paging :: paging(path='/admin/userList', paging=${page})" />
+        <div th:replace="fragments/paging :: paging(path='/admin/user/list', paging=${page})" />
 
     </main>
 
@@ -82,7 +78,7 @@
 
     function approval(id) {
 
-        var url = contextPath + '/admin/userApproval';
+        var url = contextPath + '/admin/user/approval';
 
         $.ajax({
             url : url
@@ -105,7 +101,7 @@
 
     function approvalCancel(id) {
 
-        var url = contextPath + '/admin/userApprovalCancel';
+        var url = contextPath + '/admin/user/approval/cancel';
 
         $.ajax({
             url : url
@@ -129,7 +125,7 @@
 
     function remove(id) {
 
-        var url = contextPath + '/admin/userRemove';
+        var url = contextPath + '/admin/user/delete';
 
         $.ajax({
             url : url
@@ -153,7 +149,7 @@
 
     function restore(id) {
 
-        var url = contextPath + '/admin/userRestore';
+        var url = contextPath + '/admin/user/restore';
 
         $.ajax({
             url : url

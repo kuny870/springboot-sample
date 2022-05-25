@@ -1,86 +1,65 @@
 package com.wizvera.templet.controller;
 
+import com.wizvera.templet.config.JWT.JwtTokenProvider;
 import com.wizvera.templet.model.User;
+import com.wizvera.templet.model.response.Message;
+import com.wizvera.templet.model.response.StatusEnum;
+import com.wizvera.templet.repository.UserRepository;
 import com.wizvera.templet.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import javassist.bytecode.DuplicateMemberException;
+import com.wizvera.templet.util.CryptoUtils;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
 
-@Api(tags = {"유저 관련한 정보를 제공하는 Controller"})
-@RestController
-@RequestMapping
+import static com.wizvera.templet.logging.LogMdcKey.DB_AUDIT_PREFIX;
+import static com.wizvera.templet.logging.LogMdcKey.DB_LOGGING_PREFIX;
+
 @RequiredArgsConstructor
+@RestController
+@Slf4j
+@RequestMapping
 public class UserController {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private final UserService userService;
-
-    /**
-     * OAuth2 테스트
-     * @param user
-     * @return
-     */
-    @ApiOperation(value = "OAuth2 테스트")
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/oauth2/auth")
-    public Object greeting3(@AuthenticationPrincipal Object user) {
-        return user;
-    }
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     /**
-     * JWT 테스트
-     * @return
-     */
-    @ApiOperation(value = "JWT 테스트")
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/greeting")
-    public String greeting2() {
-        return "hello";
-    }
-
-    /**
-     * PreAuthorize 테스트
-     * @param name
-     * @return
-     */
-    @ApiOperation(value = "PreAuthorize 테스트")
-    @PreAuthorize("@nameCheck.check(#name)")
-    @GetMapping("/greeting/{name}")
-    public String greeting1(@PathVariable String name) {
-        return "hello";
-    }
-
-    /**
-     * 메인페이지
+     * 메인 페이지
      * @param mav
-     * @param model
      * @param session
      * @return
      */
-    @ApiOperation(value = "메인페이지")
     @GetMapping("/")
-    public ModelAndView main(ModelAndView mav, Model model, HttpSession session) {
+    public ModelAndView main(ModelAndView mav, HttpSession session) {
 
-        logger.trace(">>>>>>>>>>>>>>>>>>>>>>>>>>> Trace Level 테스트");
-        logger.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>> Debug Level 테스트");
-        logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>> Info Level 테스트");
-        logger.warn(">>>>>>>>>>>>>>>>>>>>>>>>>>> Warn Level 테스트");
-        logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>> Error Level 테스트");
+        log.trace(">>>>>>>>>>>>>>>>>>>>>>>>>>> Trace Level 테스트");
+        log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>> Debug Level 테스트");
+        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>> Info Level 테스트");
+        log.warn(">>>>>>>>>>>>>>>>>>>>>>>>>>> Warn Level 테스트");
+        log.error(">>>>>>>>>>>>>>>>>>>>>>>>>>> Error Level 테스트");
 
         mav.addObject("sessionId", session.getId());
         mav.setViewName("index");
@@ -92,7 +71,6 @@ public class UserController {
      * @param mav
      * @return
      */
-    @ApiOperation(value = "로그인 페이지")
     @GetMapping("login")
     public ModelAndView login(ModelAndView mav) {
         mav.setViewName("loginForm");
@@ -104,7 +82,6 @@ public class UserController {
      * @param mav
      * @return
      */
-    @ApiOperation(value = "로그인이 필요합니다 페이지")
     @GetMapping("login-required")
     public ModelAndView loginRequired(ModelAndView mav) {
         mav.setViewName("LoginRequired");
@@ -116,7 +93,6 @@ public class UserController {
      * @param mav
      * @return
      */
-    @ApiOperation(value = "로그인 에러 페이지")
     @GetMapping("/login-error")
     public ModelAndView loginError(ModelAndView mav) {
         mav.addObject("loginError", true);
@@ -129,7 +105,6 @@ public class UserController {
      * @param mav
      * @return
      */
-    @ApiOperation(value = "회원가입 페이지")
     @GetMapping("/signup")
     public ModelAndView signup(ModelAndView mav) {
         mav.setViewName("signup");
@@ -140,9 +115,8 @@ public class UserController {
      * 권한 디테일 정보 페이지
      * @return
      */
-    @ApiOperation(value = "권한 디테일 정보 페이지")
     @ResponseBody
-    @GetMapping("/auth")
+    @GetMapping("/oauth2/auth")
     public Authentication auth() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
@@ -152,7 +126,6 @@ public class UserController {
      * @param mav
      * @return
      */
-    @ApiOperation(value = "접근 거부 페이지")
     @GetMapping("/access-denied")
     public ModelAndView accessDenied(ModelAndView mav) {
         mav.setViewName("AccessDenied");
@@ -164,7 +137,6 @@ public class UserController {
      * @param mav
      * @return
      */
-    @ApiOperation(value = "접근 거부 페이지2")
     @GetMapping("/access-denied2")
     public ModelAndView accessDenied2(ModelAndView mav) {
         mav.setViewName("AccessDenied2");
@@ -172,97 +144,163 @@ public class UserController {
     }
 
     /**
-     * 유저 페이지
+     * 회원 페이지
      * @param mav
      * @return
      */
-    @ApiOperation(value = "유저 페이지")
-//    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    @GetMapping("/user-page")
+    @GetMapping("/user/page")
     public ModelAndView userPage(ModelAndView mav) {
-//        if(true){
-//            throw new YouCannotAccessUserPage();
-//        }
         mav.setViewName("UserPage");
         return mav;
     }
 
     /**
-     * 리턴 모든 유저 by JSON
+     * 회원가입
+     * @param mav
      * @return
      */
-    @ApiOperation(value = "리턴 모든 유저 by JSON")
-    @Secured({"ROLE_USER", "RUN_AS_ADMIN"})
-    @GetMapping("/user/userListByUser")
-    public ResponseEntity userListByUser() {
-        return ResponseEntity.ok(userService.getUsers());
-    }
+    @PostMapping("/user/create")
+    public ModelAndView signup(User user, ModelAndView mav) { // 회원 추가
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
+        Optional<User> optionalUser = userRepository.findByUserId(user.getUserId());
 
-    /**
-     * 회원 가입하기
-     * @param user
-     * @return
-     */
-    @ApiOperation(value = "회원 가입하는 POST 매핑 함수")
-    @PostMapping("/user/save")
-    public ModelAndView signup(User user) throws DuplicateMemberException { // 회원 추가
-        ModelAndView mav = new ModelAndView();
-        Long result = userService.save(user);
-        if(result == 0L) {
+        if(optionalUser.isPresent()){
             mav.setViewName("signupDuplicateId");
-            mav.addObject("signupError", true);
-        }else {
-            mav.setViewName("index");
+            return mav;
         }
 
+        userRepository.save(User.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .name(user.getName())
+                .phoneNumber(user.getPhoneNumber())
+                .roles(user.getRoles())
+                .build());
+        mav.setViewName("index");
         return mav;
     }
 
-    /**
-     * 회원정보 수정하기
-     * @param user
-     * @return
-     */
-    @ApiOperation(value = "회원 정보 수정하는 POST 매핑 함수")
-    @PostMapping("/user/update")
-    public ModelAndView update(User user) {  // 회원 수정
-        userService.updateUser(user);
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("main");
-        return mav;
-    }
-
-    /**
-     * 회원 탈퇴하기
-     * @param user
-     * @return
-     */
-    @ApiOperation(value = "회원 탈퇴하는 POST 매핑 함수")
-    @PostMapping("/user/remove")
-    public ModelAndView remove(User user) {  // 회원 탈퇴
-        userService.removeUser(user);
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("login");
-        return mav;
-    }
-
-
-
-
-    /**
-     * entityManager를 사용하여 직접 sql문 날리기 예제
-     * @param username
-     * @return
-     */
-//    @Transactional
-//    @GetMapping("/searchUserName")
-//    public String searchParamUser(@RequestParam(value = "username") String username) {
-//        String sql = "SELECT u FROM UserInfo u WHERE u.username = :username";
-//        List resultList = entityManager.createQuery(sql)
-//                .setParameter("username", username)
-//                .getResultList();
-//        return resultList.toString();
+//    @PostMapping("/user/create")
+//    public void signup(@RequestBody User user){
+//        userRepository.save(User.builder()
+//                .email(user.getEmail())
+//                .password(passwordEncoder.encode(user.getPassword()))
+//                .name(user.getName())
+//                .phoneNumber(user.getPhoneNumber())
+//                .roles(Collections.singletonList("ROLE_USER"))
+//                .build());
+//
 //    }
+
+    /**
+     * 회원정보 페이지
+     * @param mav
+     * @return
+     */
+    @GetMapping("/user/profile")
+    public ModelAndView profile(ModelAndView mav, Authentication authentication) {
+        Optional<User> user = userRepository.findByUserId(authentication.getName());
+        mav.addObject("user", user.get());
+        mav.setViewName("profile");
+        return mav;
+    }
+
+    /**
+     * 회원정보 수정
+     * @param user
+     * @return
+     */
+    @PostMapping("/user/update")
+    public ResponseEntity<Message> update2(User user, HttpServletResponse response) throws IOException {
+        userService.updateUser(user);
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+
+        response.sendRedirect("/");
+        return ResponseEntity.ok(message);
+    }
+
+    /**
+     * 회원 탈퇴
+     * @param id
+     * @return
+     */
+    @GetMapping("/user/delete")
+    public ResponseEntity<Message> delete2(Long id, HttpServletRequest request) {
+        userService.deleteUser(id);
+
+        HttpSession session = request.getSession(true);
+        session.invalidate();
+
+        Message message = new Message();
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("성공 코드");
+
+        return ResponseEntity.ok(message);
+    }
+
+
+    @PostMapping("/login")
+    public void login(User user, HttpServletResponse response, ModelAndView mav, String remember) throws IOException {
+        User member = userRepository.findByUserId(user.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 ID 입니다."));
+        if (!passwordEncoder.matches(user.getPassword(), member.getPassword())) {
+            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+        }
+
+        String token = jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+
+        String hToken = null;
+        try {
+            hToken = CryptoUtils.genHexSHA256(token, 1);
+        }
+        catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            String errMsg = "error has occurred while generating the hashed-token.";
+            log.info(DB_AUDIT_PREFIX);
+            log.info(DB_LOGGING_PREFIX + "err[{}]", errMsg);
+        }
+
+        user.setToken(hToken);
+
+        response.setHeader("X-AUTH-TOKEN", token);
+
+        Cookie cookie = new Cookie("X-AUTH-TOKEN", token);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        response.addCookie(cookie);
+
+        response.sendRedirect("/");
+    }
+
+    @PostMapping("/logout")
+    public void logout(HttpServletResponse response
+                        , HttpServletRequest request
+                        , @AuthenticationPrincipal User loginUser){
+
+        if ( loginUser != null ) {
+            loginUser.setToken(null);
+            userRepository.save(loginUser);
+            log.debug("[@DEBUG@]admin-info : {}", loginUser.getUserId());
+        }
+
+        Cookie cookie = new Cookie("X-AUTH-TOKEN", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
+
+    @GetMapping("/info")
+    public User getInfo(){
+        Object details = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(details != null && !(details instanceof  String)) return new User((User) details);
+        return null;
+    }
 
 }
