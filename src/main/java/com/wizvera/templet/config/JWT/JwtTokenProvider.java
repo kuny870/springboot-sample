@@ -1,7 +1,10 @@
 package com.wizvera.templet.config.JWT;
 
+import com.wizvera.templet.model.User;
 import com.wizvera.templet.repository.UserRepository;
 import com.wizvera.templet.service.UserService;
+import com.wizvera.templet.util.CryptoUtils;
+import com.wizvera.templet.util.StringUtil;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +18,11 @@ import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * JWT 토큰을 생성하고, 토큰을 검증하는 클래스.
@@ -30,7 +36,7 @@ public class JwtTokenProvider {
 
     private String secretKey = "secret";
 
-    private long tokenValidTime = 1000L * 60 * 60;
+    private long tokenValidTime = 1000L * 60 * 60;  // 60분
 
     @Autowired
     private UserService userService;
@@ -49,7 +55,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보
-                .setExpiration(new Date(now.getTime() + tokenValidTime)) // set Expire Time
+//                .setExpiration(new Date(now.getTime() + tokenValidTime)) // set Expire Time
                 .signWith(SignatureAlgorithm.HS256, secretKey)  // 사용할 암호화 알고리즘과
                 // signature 에 들어갈 secret값 세팅
                 .compact();
@@ -59,6 +65,30 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token) {
         String userPk = this.getUserPk(token);
         UserDetails userDetails = userService.loadUserByUsername(this.getUserPk(token));
+
+        // 저장된 token과 전달받은 token이 다르면 다시 로그인
+//        Optional<User> OptionalUser = userRepository.findByUserId(userPk);
+//        User user = OptionalUser.get();
+//
+//        if ( StringUtil.isBlank(user.getToken()) ) {
+//            int errCode = Integer
+//                    .valueOf(messageSource.getMessage("loginRetry.code", null, LocaleContextHolder.getLocale()));
+//            String errMsg = messageSource.getMessage("loginRetry.msg", null, LocaleContextHolder.getLocale());
+//            throw new JwtAuthException(errCode, errMsg);
+//        }
+//
+//        try {
+//            if ( !CryptoUtils.genHexSHA256(token, 1).equals(user.getToken()) ) {
+//                int errCode = Integer
+//                        .valueOf(messageSource.getMessage("tokenInvalid.code", null, LocaleContextHolder.getLocale()));
+//                String errMsg = messageSource.getMessage("tokenInvalid.msg", null, LocaleContextHolder.getLocale());
+//                throw new JwtAuthException(errCode, errMsg);
+//            }
+//        }
+//        catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
 
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }

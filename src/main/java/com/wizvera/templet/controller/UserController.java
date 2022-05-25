@@ -6,13 +6,16 @@ import com.wizvera.templet.model.response.Message;
 import com.wizvera.templet.model.response.StatusEnum;
 import com.wizvera.templet.repository.UserRepository;
 import com.wizvera.templet.service.UserService;
+import com.wizvera.templet.util.CryptoUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,7 +24,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
+
+import static com.wizvera.templet.logging.LogMdcKey.DB_AUDIT_PREFIX;
+import static com.wizvera.templet.logging.LogMdcKey.DB_LOGGING_PREFIX;
 
 @RequiredArgsConstructor
 @RestController
@@ -245,6 +253,19 @@ public class UserController {
         }
 
         String token = jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+
+        String hToken = null;
+        try {
+            hToken = CryptoUtils.genHexSHA256(token, 1);
+        }
+        catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            String errMsg = "error has occurred while generating the hashed-token.";
+            log.info(DB_AUDIT_PREFIX);
+            log.info(DB_LOGGING_PREFIX + "err[{}]", errMsg);
+        }
+
+        user.setToken(hToken);
+
         response.setHeader("X-AUTH-TOKEN", token);
 
         Cookie cookie = new Cookie("X-AUTH-TOKEN", token);
@@ -257,7 +278,16 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public void logout(HttpServletResponse response){
+    public void logout(HttpServletResponse response
+                        , HttpServletRequest request
+                        , @AuthenticationPrincipal User loginUser){
+
+        if ( loginUser != null ) {
+            loginUser.setToken(null);
+            userRepository.save(loginUser);
+            log.debug("[@DEBUG@]admin-info : {}", loginUser.getUserId());
+        }
+
         Cookie cookie = new Cookie("X-AUTH-TOKEN", null);
         cookie.setHttpOnly(true);
         cookie.setSecure(false);
